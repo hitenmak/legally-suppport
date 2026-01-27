@@ -1,0 +1,100 @@
+<% /*const isActiveItem = (routeName = '') => {
+    return ServiceConfig.activeRoute.includes(routeName) ? 'active' : '';
+};*/
+
+const isActiveItem = (slug = '', isExcludePrefix = true, returnValue = 'active') => {
+    const slugParts = slug.split('/');
+
+    const routeParts = (ServiceConfig.activeRouteSlug.split('?')[0]).split('/');
+
+    if(routeParts[0] === '') routeParts.shift();
+    if(isExcludePrefix) routeParts.shift();
+
+    // Compare the parts one by one
+    for (let i = 0; i < slugParts.length; i++) {
+        const routePart = routeParts[i];
+        const slugPart = slugParts[i];
+
+        // If prefix part is dynamic (e.g., :id), skip the check
+        if(slugPart.startsWith(':') || slugPart.startsWith('*')) continue;
+
+        // If the parts do not match, return false
+        if(routePart !== slugPart) return '';
+    }
+    return returnValue;
+}
+
+const isPermissionGranted = (key, name = 'no-permission-block') => {
+    // return typeof ServiceConfig.adminPermissions
+    // return ServiceConfig.adminPermissions[key]+'x';
+    return ServiceConfig.isMasterAdmin || ServiceConfig.adminPermissions[key] ? '' : name;
+}
+%>
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="#" class="brand-link">
+        <img src="/fw2ezuyzb751/img/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: 1">
+        <!-- <img src="/fw2ezuyzb751/img/logo.png" alt="AdminLTE Logo" class="img-fluid m-auto " style="opacity: .8">-->
+        <h4 class="brand-text">
+            <%= process.env.APP_NAME || 'Admin' %>
+        </h4>
+    </a>
+
+    <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="<%= AuthUser.profile || '/fw2ezuyzb751/img/admin-profile-default.jpg' %>" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">
+                    <%= AuthUser.name %>
+                </a>
+            </div>
+        </div>
+
+        <!--<div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>-->
+
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent nav-compact" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item ">
+                    <a href="<%= _.getFullUrl('dashboard') %>" class="nav-link <%= isActiveItem('dashboard') %>"> <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+
+                <li class="nav-item ">
+                    <a href="<%= _.getFullUrl('users') %>" class="nav-link <%= isActiveItem('users') %>"> <i class="nav-icon fas fa-users"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                
+                <li class="nav-item ">
+                    <a href="<%= _.getFullUrl('support-tickets') %>" class="nav-link <%= isActiveItem('support-tickets') %>"> <i class="nav-icon fas fa-ticket"></i>
+                        <p>Support Tickets</p>
+                    </a>
+                </li>
+                
+
+
+                
+
+
+                
+
+                
+
+
+                
+            </ul>
+        </nav>
+    </div>
+</aside>

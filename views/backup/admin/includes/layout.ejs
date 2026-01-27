@@ -1,0 +1,99 @@
+<!-- Flash Messages -->
+<% if (FlashMessages) { %>
+    <% FlashMessages.forEach(m=>{ %>
+        <% if (m.error) { %>
+            <div class="alert alert-info">error: <%= m.error; %></div>
+        <% } %>
+        <% if (m.success) { %>
+            <div class="alert alert-info">success: <%= m.success; %></div>
+        <% } %>
+    <% }); %>
+<% } %>
+<%
+
+const isPageLayout = ServiceConfig.isPageLayout === true;
+%>
+<!-- / Flash Messages -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= process.env.APP_NAME || 'Admin' %></title>
+
+    <!-- Style -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="/fw2ezuyzb751/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/fw2ezuyzb751/css/adminlte.min.css">
+    <link rel="stylesheet" href="/fw2ezuyzb751/css/custom.css">
+    <!-- / Style -->
+
+</head>
+<body class="hold-transition <%= isPageLayout ? 'login-page' : 'sidebar-mini' %>">
+
+<%- include('../components/loader'); -%>
+
+<% if (isPageLayout) { %>
+
+    <!-- Content -->
+    <%- include('../'+ServiceConfig.viewName); -%>
+    <!-- / Content -->
+
+<% } else { %>
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <%- include('navbar'); -%>
+        <!-- / Navbar -->
+
+        <!-- Sidebar -->
+        <%- include('sidebar'); -%>
+        <!-- / Sidebar -->
+
+        <!-- Content -->
+        <%- include('../'+ServiceConfig.viewName); -%>
+        <!-- / Content -->
+
+        <!-- Footer -->
+        <%- include('footer'); -%>
+        <!-- / Footer -->
+
+
+        <!-- Control Sidebar -->
+        <!--<aside class="control-sidebar control-sidebar-dark"></aside>-->
+        <!-- / Control Sidebar -->
+    </div>
+<% } %>
+
+<!-- Component -->
+<%- include('../components/data-table/table'); -%>
+<!-- / Component -->
+
+<!-- Hidden view data -->
+<div id="viewData" class="d-none"><%= typeof viewData !== 'undefined' ? JSON.stringify(viewData) : '' %></div>
+<!-- / Hidden view data -->
+
+<!-- Scripts -->
+<script src="/fw2ezuyzb751/plugins/jquery/jquery.min.js"></script>
+<script src="/fw2ezuyzb751/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/fw2ezuyzb751/js/adminlte.min.js"></script>
+<script src="/fw2ezuyzb751/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+<!--<script src="/fw2ezuyzb751/js/demo.js"></script>-->
+<!-- / Scripts -->
+
+<script src="/fw2ezuyzb751/custom.js"></script>
+<script src="/fw2ezuyzb751/root.js"></script>
+<script src="/fw2ezuyzb751/user.js"></script>
+
+<script>
+
+     $(document).ready(function () {
+        $('.pageLoaderLoadPage').hide();
+    });
+</script>
+
+</body>
+</html>

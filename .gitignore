@@ -1,0 +1,13 @@
+.zip
+.env
+.idea
+.vscode
+
+node_modules/
+database/
+
+package-lock.json
+public/storage/support-attachment*
+
+dataSources.xml
+desktop.ini

@@ -1,0 +1,98 @@
+<div class="bin _tableWrapper">
+
+    <!-- Card -->
+    <section class="_content content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title _tableTitle"><!--Responsive Hover Table--></h3>
+
+                            <div class="card-tools">
+                                <div class="row align-items-center">
+                                <button class="btn btn-secondary bg-gradient-secondary btn-sm d-inline _downloadReport mr-3" type="button" style="display:none !important;">
+                                    <span class="btnLoader" style="display: none"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...</span>
+                                    <span class="btnLabel">Download Report</span>
+                                </button>
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input type="text" class="form-control float-right _dtSearch" data-column="commonSearch" placeholder="Search">
+
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-default table-search-btn" style="height: 31px">
+                                            <i class="fas fa-times _clearSearch"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0 ">
+                            <table class="table table-hover text-nowrap">
+                                <!-- Head -->
+                                <thead>
+                                    <tr class="_head"></tr>
+                                </thead>
+                                <!-- / Head -->
+
+                                <!-- Rows -->
+                                <tbody class="_tbody _tableLoaderContent" style="display: none"></tbody>
+                                <tbody class="_tbodyLoader _tableLoader"></tbody>
+
+
+                                <!-- / Rows -->
+                            </table>
+                        </div>
+                        <!-- No Record Found -->
+                        <div class="card card-widget widget-user _tableNoRecord m-5" style="display: none">
+                            <div class="card-footer py-5">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="description-block">
+                                            <img class="mb-2" src="/fw2ezuyzb751/img/empty-box.png" alt="User Avatar" style="height: 100px;width: auto;">
+                                            <h5 class="description-header text-secondary">No records has been found yet.</h5>
+                                            <!--                                            <span class="description-text">Add a new record by simpley clicking the button on top right side.</span>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / No Record Found -->
+
+                        <!-- /.card-body -->
+                        <div class="card-footer clearfix _tableFooter">
+                            <div class="row _tableLoaderContent" style="display: none">
+                                <div class="col-sm-12 col-md-5">
+                                    <div class="dataTables_info _pageCountDetails" role="status" aria-live="polite">Showing 1 to 10 of ... entries</div>
+                                </div>
+                                <div class="col-sm-12 col-md-7 _pageButtons">
+                                </div>
+                            </div>
+
+                            <div class="row _tableLoader">
+                                <div class="col-sm-12 col-md-5 _footerEntries">
+                                    <div class="dataTables_info _entriesStatic" role="status" aria-live="polite">Showing 1 to 10 of ... entries</div>
+                                    <div class="dataTables_info" role="status" aria-live="polite">
+                                        <span class="row-loading lod-text-title _entriesLoad">&emsp;</span></div>
+                                </div>
+                                <div class="col-sm-12 col-md-7 _footerPager">
+                                    <span class="row-loading lod-text-title" style="width: 200px; height: 35px; float: right">&emsp;</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <!-- /.row -->
+
+
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- / Card -->
+
+
+</div>

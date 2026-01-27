@@ -1,0 +1,71 @@
+<%
+ConfigLabels = {
+    'title': { 's': 'User', 'p': 'Users' },
+    'storeUrl': _.getFullUrl('user/store'),
+};
+
+%>
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><%= ConfigLabels.title.s; %></h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- / Page Header -->
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-secondary">
+                <form name="this_form" id="this_form" method="POST" action="<%= ConfigLabels.storeUrl %>" role="form" >
+                    <!-- Body -->
+                    <input type="hidden" name="id" class="form-control" value="<%=record._id%>">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="">Name</label>
+                                    <input type="text" name="name" class="form-control requiredData" value="<%=record.name%>">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="">Email</label>
+                                    <input type="text" name="email" class="form-control requiredData" value="<%=record.email%>">
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="d-block">Status</label>
+                                    <input type="checkbox" class="c-toggle-switch" <%=record.status ? 'checked' : ''%> >
+                                    <input type="hidden" name="status" class="toggleSwitchVal " value="<%=record.status%>">
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- / Body -->
+
+
+                    <!-- Footer -->
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary float-right">Save</button>
+                    </div>
+                    <!-- / Footer -->
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+

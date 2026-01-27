@@ -1,0 +1,182 @@
+<% ConfigLabels = {'title': {'s': 'User', 'p': 'Users'},}; %>
+
+<!-- Style ------------------------------------------------------------>
+<%- contentFor('style') %>
+
+
+<!-- Content ------------------------------------------------------------>
+<%- contentFor('content') %>
+
+<div class="content-wrapper">
+
+    <!-- Page Header -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-4">
+                    <h1>
+                        <%= ConfigLabels.title.p; %>
+
+                        <span class=" badge badge-secondary ml-2 _pagerTotalRecords d-none"></span>
+                    </h1>
+                </div>
+                <div class="col-sm-8">
+                    <div class="row justify-content-end">
+                        
+
+                        
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- / Page Header -->
+
+    <!-- Main content -->
+    <ANY id="tw">
+
+    </ANY>
+
+    <!-- /.content -->
+</div>
+
+
+<!-- Script ------------------------------------------------------------>
+<%- contentFor('script') %>
+
+<script>
+    tableLayout = {
+        name: {label: 'Name', displayType: 'text', isSearchable: 0, isSortable: 0},
+        username: {label: 'Username', displayType: 'text', isSearchable: 0, isSortable: 0},
+        email: {label: 'Email', displayType: 'text', isSearchable: 0, isSortable: 0},
+        phone: {label: 'Phone', displayType: 'text', isSearchable: 0, isSortable: 0},
+        createdAt: {label: 'Created At', displayType: 'badge', isSearchable: 0, isSortable: 1},
+    };
+    // requiredField = {}
+
+    recordUrls = {
+        listing: 'user/list'
+    };
+
+    // pageConfig = {
+    //     showRowAction: true,
+    // };
+
+    const addPageNumber = () => {
+        $('._tbody a.btn').each(i => {
+            const el = $($('._tbody a.btn')[i]);
+            let url = el.attr('href') || '';
+            if(url.includes('user/details/'))
+                el.attr('href', `${url}?page=${pager.pageNumber}`);
+        })
+    }
+
+    $(document).on('click', '._tbody a.btn', function(e) {
+        const el = $(this);
+        let url = el.attr('href') || '';
+        if(url.includes('user/details/') || url.includes('user/delete/')){
+            e.preventDefault();
+            localStorage.setItem('currentPageUsers', pager.pageNumber);
+            window.location.href = url; //`${url}?page=${pager.pageNumber}`;
+        }
+    });
+
+    const updateFilter = (isOldGet = false) => {
+        let currentFilters = localStorage.getItem('currentFiltersUsers');
+        if(currentFilters) currentFilters = JSON.parse(currentFilters) || {}
+        else currentFilters = {};
+        if(isOldGet) {
+
+            currentFilters.requestType = currentFilters.requestType || $('#requestType').find(":selected").val();
+            currentFilters.isForDeveloper = currentFilters.isForDeveloper || $('#isForDeveloper').find(":selected").val();
+            currentFilters.isRepliedByAdmin = currentFilters.isRepliedByAdmin || $('#isRepliedByAdmin').find(":selected").val();
+            currentFilters.isOpen = currentFilters.isOpen || $('#isOpen').find(":selected").val();
+            currentFilters.isRead = currentFilters.isRead || $('#isRead').find(":selected").val();
+            currentFilters.isDeleted = currentFilters.isDeleted || $('#isDeleted').find(":selected").val();
+
+            $(`#requestType option[value="${currentFilters.requestType}"]`).attr('selected','selected');
+            $(`#isForDeveloper option[value="${currentFilters.isForDeveloper}"]`).attr('selected','selected');
+            $(`#isRepliedByAdmin option[value="${currentFilters.isRepliedByAdmin}"]`).attr('selected','selected');
+            $(`#isOpen option[value="${currentFilters.isOpen}"]`).attr('selected','selected');
+            $(`#isRead option[value="${currentFilters.isRead}"]`).attr('selected','selected');
+            $(`#isDeleted option[value="${currentFilters.isDeleted}"]`).attr('selected','selected');
+
+        } else {
+
+            currentFilters.requestType = $('#requestType').find(":selected").val();
+            currentFilters.isForDeveloper = $('#isForDeveloper').find(":selected").val();
+            currentFilters.isRepliedByAdmin = $('#isRepliedByAdmin').find(":selected").val();
+            currentFilters.isOpen = $('#isOpen').find(":selected").val();
+            currentFilters.isRead = $('#isRead').find(":selected").val();
+            currentFilters.isDeleted = $('#isDeleted').find(":selected").val();
+        }
+
+
+        localStorage.setItem('currentFiltersUsers', JSON.stringify(currentFilters));
+
+        setFilters(currentFilters.requestType, 'requestType');
+        setFilters(currentFilters.isForDeveloper, 'isForDeveloper');
+        setFilters(currentFilters.isRepliedByAdmin, 'isRepliedByAdmin');
+        setFilters(currentFilters.isOpen, 'isOpen');
+        setFilters(currentFilters.isRead, 'isRead');
+        setFilters(currentFilters.isDeleted, 'isDeleted');
+
+        let currentPage = localStorage.getItem('currentPageUsers');
+        if(currentPage)
+            localStorage.setItem('currentPageUsers', 1);
+
+        getPage(currentPage ? currentPage : 1);
+
+    }
+
+
+    init(() => {
+        initTable(true, false);
+        updateFilter(true);
+    });
+
+    $(document).on('click', '.goToPage', function () {
+        let currentFilters = localStorage.getItem('currentFiltersUsers');
+        if(currentFilters) currentFilters = JSON.parse(currentFilters) || {};
+
+        getPage($(this).attr('data-pg-no'));
+    });
+    $('#requestType, #isForDeveloper, #isRepliedByAdmin, #isOpen, #isRead, #isDeleted').change(function () {
+        updateFilter();
+        // let currentVal = $(this).find(":selected").val();
+        // applyFilters(currentVal, 'requestType');
+    });
+
+    
+    /* const deleteIds = [];
+    $(document).on('click', '.deleteMultiple', function () {
+        const el = $(this);
+        let url = el.attr('href') || '';
+
+        let selectedCheckboxEl = $('._deleteSelected:checked');
+        if(!selectedCheckboxEl.length) return;
+
+        selectedCheckboxEl.each(i=>{
+            deleteIds.push($(selectedCheckboxEl[i]).val());
+        });
+
+        if(empty(deleteIds)) return;
+        
+        $.ajax({
+            url: getUrl('user/delete-multiple'),
+            type: 'POST',
+            data: {
+                deleteIds
+            },
+            success: (res) => {
+                toastMake(res);
+                if(res.isSuccess)
+                    location.reload();
+            }
+        });
+    });
+ */
+</script>

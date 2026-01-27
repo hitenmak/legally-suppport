@@ -1,0 +1,51 @@
+<table cellspacing="0" cellpadding="0" border="0" width="650" align="center" style="border:1px solid #e2e2e2;color:#13324b;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:normal">
+   <tbody>
+      <tr>
+         <td align="center" valign="top">
+            <table cellspacing="0" cellpadding="0" width="100%" align="center" style="color:#000000;font-size:12px">
+               <tbody>
+                  <tr>
+                     <td valign="top" bgcolor="#ffffff" style="text-align:center;padding:10px 0 0 0;border-bottom:1px solid #e2e2e2">
+                        <a href="https://www.legallyng.com/" target="_blank" ><img src="<%= config.logoImg ;%>" style="margin-bottom:10px;" border="0">
+                        <!-- https://247sue.com/upload/pdf/app_logo.png -->
+                        </a>
+                    </td>
+                  </tr>
+                  <tr>
+                     <td style="padding:10px 10px 20px" align="center" valign="top">
+                        <table width="100%" cellspacing="0" cellpadding="0" align="center" style="font-size:12px;color:#333">
+                           <tbody>
+                              <tr>
+                                 <td align="left" style="padding:10px 0;font-size:12px"><strong style="font-size:18px;color:#333;font-family:Arial,Helvetica,sans-serif">  Following message received via Legally</strong></td>
+                              </tr>
+                              <tr>
+                                 <td height="5"></td>
+                              </tr>
+                              <tr>
+                                 <td width="100%" border="0">
+                                    <!-- Body -->
+                                    <%- include('../'+viewTemplateName+'.ejs'); %>
+                                    <!-- END: Body -->
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="line-height:18px;padding:10px;border-top:solid 1px #ccc">
+                           <tbody>
+                              <tr>
+                                 <td align="left" width="50%" style="text-align:left;font-size:12px;font-family:Arial,Helvetica,sans-serif"><strong>Thanks &amp; Regards</strong><br> Legally Team</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </td>
+      </tr>
+   </tbody>
+</table>

@@ -1,0 +1,50 @@
+<!-- Body -->
+<!-- Card Round -->
+<tr>
+    <td class="m-fullTd">
+        <div class="card" style="border: 1px solid #b68c03;color:#b68c03;border-radius: 12px;padding: 24px;">
+            <h1 class="cardTitle" style="display: block;margin-top: 0;margin-bottom: 16px;font-family: 'Inter', sans-serif;font-weight: 600;font-size: 24px;line-height: 1.2;color:#F5E065;">
+                Alert! New withdraw request received.
+            </h1>
+            <h5 class="cardSTitle" style="display: block;margin-top: 0;margin-bottom: 16px;font-family: 'Inter', sans-serif;font-weight: 700;font-size: 16px;line-height: 1.2;color:#F5E065;">
+                Dear <%= user.username %>,
+            </h5>
+            <p style="display: block;margin-top: 0;margin-bottom: 16px;font-family: 'Inter', sans-serif;font-weight: 400;font-size: 16px;line-height: 1.2;color:#F5E065;">
+                You’ve initiated a request to withdraw <%= amount %> coins to the following address:
+                <%= walletAddress %><br/><br/>
+                Please carefully review the withdrawal address before you proceed. iFORTUNE will not be responsible for any funds sent to the wrong address.<br/>
+            </p>
+            <p style="display: block;margin-top: 0;margin-bottom: 16px;font-family: 'Inter', sans-serif;font-weight: 400;font-size: 16px;line-height: 1.2;color:#F5E065;">
+                Your verification code is:
+            </p>
+            <!-- Button -->
+            <h4 class="cardOtp" style="display: block; color:#000000;font-family: 'Inter', sans-serif;font-weight: 600;font-size: 24px;line-height: 1.2;padding: 24px;background: #B68C03;border-radius: 12px;margin: 0;text-align: center;">
+                <%= otp ;%>
+            </h4><br/>
+            <!-- END: Button -->
+
+            <p style="display: block;margin-top: 0;margin-bottom: 16px;font-family: 'Inter', sans-serif;font-weight: 400;font-size: 16px;line-height: 1.2;color:#F5E065;">
+                The verification code will be valid for <%=otpExpiredInSeconds%> seconds. Please do not share your code with anyone.
+            </p>
+            <hr style="border: 1px solid #b68c03;"/>
+            <p style="display: block;margin-top: 0;margin-bottom: 16px;font-family: 'Inter', sans-serif;font-weight: 400;font-size: 20px;line-height: 1.2;color:#e12e1c;">
+                Don’t recognize this activity? Please reset your password and contact customer support immediately.
+            </p>
+        </div>
+    </td>
+</tr>
+<!-- END: Card Round -->
+
+
+<!-- Card Quote -->
+<tr>
+    <td class="m-fullTd">
+        <div class="card quoteCard" style="background-color: #181A1B;border-radius: 12px;padding: 24px;margin-top: 16px;text-align: center;">
+            <p style="font-family: 'Inter', sans-serif;font-weight: 300;font-size: 16px;line-height: 1.2;color:#F5E065;margin: 0;">
+                <%= config.appName ;%> Team
+            </p>
+        </div>
+    </td>
+</tr>
+<!-- END: Card Quote -->
+<!-- END: Body -->

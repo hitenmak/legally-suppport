@@ -1,0 +1,33 @@
+<%
+ConfigLabels = {
+    'title': { 's': 'User', 'p': 'Users' },
+    'addUrl': process.env.APP_URL+'/fw2ezuyzb751/user/add',
+};
+%>
+
+<div class="content-wrapper">
+
+    <!-- Page Header -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><%= ConfigLabels.title.p ;%><span class=" badge badge-secondary ml-2 _pagerTotalRecords d-none"></span></h1>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row justify-content-end mr-1">
+                        <a href="<%= ConfigLabels.addUrl ;%>" class="btn bg-gradient-secondary btn-sm">+ Add</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- / Page Header -->
+
+    <!-- Main content -->
+    <ANY id="tw">
+
+    </ANY>
+
+    <!-- /.content -->
+</div>
