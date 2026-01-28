@@ -1,0 +1,73 @@
+<%- contentFor('content') %>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Success</title>
+    <link rel="icon" href="<%=imgLogo%>" type="image/x-icon">
+    <style>
+        * {
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+
+        img {
+            height: 200px;
+            margin: 20px;
+        }
+
+        .content {
+            /*  font-family: 'Helvetica Neue';*/
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            margin: 40px;
+            margin-top: 300px;
+
+        }
+
+        .title {
+            font-weight: bold;
+            color: #D9CD56;
+        }
+
+
+        .text {
+            margin-top: 15px;
+            font-size: 25px;
+            color: #D9CD56;
+            text-align: center;
+            /*  font-family: 'avenir';*/
+            font-weight: lighter;
+        }
+
+
+
+        @media (max-width: 991px) {
+
+
+            .content {
+                font-size: 60px;
+            }
+
+            .text {
+                font-size: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class='content'>
+    <img src="<%= imgLogo %>" alt="Success">
+    <div class='title'>Payment Received</div>
+    <div class='text'>Now, Tap back button or close this window to return back to Fortune Machine App.</div>
+</div>
+
+</body>
+</html>
+

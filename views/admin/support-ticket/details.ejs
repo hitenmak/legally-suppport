@@ -1,0 +1,319 @@
+<% ConfigLabels = {
+    'title': {'s': 'Support Ticket', 'p': 'Support Tickets'}, 'storeUrl':
+            _.getFullUrl('support-ticket/reply-store'),
+    'statusUrl': _.getFullUrl('support-ticket/status'),
+    'markReadUrl': _.getFullUrl('support-ticket/mark-read'),
+    'markForDeveloper': _.getFullUrl('support-ticket/mark-for-developer'),
+    'deleteUrl': _.getFullUrl('support-ticket/delete/'+_id),
+}; %>
+<!-- Style ------------------------------------------------------------>
+<%- contentFor('style'); %>
+
+<!-- Content ------------------------------------------------------------>
+<%- contentFor('content'); %>
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>
+                        <%= ConfigLabels.title.s; %>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- / Page Header -->
+
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="activity">
+
+                                    <div class="post">
+                                        <div class="user-block">
+                                           <!-- <img class="img-circle img-bordered-sm copyTextData" data-copy-text="<%= user._id %>"
+                                                 src="<%= user.profileImage %>" alt="user image">-->
+                                            <h3>
+                                                <span class="badge <%= !isOpen ? 'badge-danger' : 'badge-success' %> float-right d-inline"><%= ticketId %></span>
+                                                <!--                                            </h3>-->
+                                                <!-- Read UnRead -->
+                                                <form method="POST" action="<%= ConfigLabels.markReadUrl %>" role="form">
+                                                    <input type="hidden" name="ticketId" class="form-control" value="<%= _id %>">
+                                                    <input type="hidden" name="isRead" class="form-control" value="<%= isRead %>">
+                                                    <button type="submit" class="btn btn-sm <%= isRead ? 'bg-gradient-success' : 'bg-gradient-secondary' %>  d-inline float-right mr-2">
+                                                        <i class="fa-solid fa-check-double"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="<%= ConfigLabels.markForDeveloper %>" role="form">
+                                                    <input type="hidden" name="ticketId" class="form-control" value="<%= _id %>">
+                                                    <input type="hidden" name="isForDeveloper" class="form-control" value="<%= isForDeveloper %>">
+                                                    <button type="submit" class="btn btn-sm bg-gradient-secondary d-inline float-right mr-2">
+                                                        <i class="fa-solid fa-star <%= isForDeveloper ? 'text-warning' : 'text-secondary' %>"></i>
+                                                    </button>
+                                                </form>
+                                                <!-- / Read UnRead -->
+                                            </h3>
+                                            <span class="username">
+                                                <a href="<%= userProfileDetails %>">
+                                                    <%= user.name %>&ensp;(<%= user.username %>)
+                                                </a>&ensp;
+                                                <i class="fa-solid fa-lg fa-clone text-secondary opacity-50 c-pointer copyTextData" data-copy-text="<%= user.username %>"></i>
+                                            </span>
+                                            <span class="description">Create on - <%= createdAt %></span>
+                                        </div>
+                                        <span class="badge badge-secondary"><%= requestType %></span>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="timeline">
+                                    <div class="timeline timeline-inverse">
+                                        <% let oldDate = ''; reply.forEach((r, i)=>{ %>
+                                            <% if(oldDate != r.dayAt){ oldDate = r.dayAt; %>
+                                            <div class="time-label">
+                                                <span class="bg-success"><%= r.dayAt %></span>
+                                            </div>
+                                            <% } %>
+                                            <div>
+                                                <i class="fas fa-user bg-secondary"></i>
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="far fa-clock"></i><%= r.replyAt %></span>
+                                                    <h3 class="timeline-header">
+                                                        <span class="t-link font-weight-bold"><%= r.userName %></span><br/>
+                                                        <%= r.message %>
+                                                    </h3>
+                                                    <% if(r.attachments.length){ %>
+                                                        <div class="timeline-body">
+                                                            <% r.attachments.forEach(r=>{ %>
+                                                                <img src="<%= r.src %>" class="imagePreviewModel" alt="Photo" style="width: 100px;">
+                                                            <% }); %>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <div>
+                                            <i class="far fa-clock <%= isOpen ? 'bg-success' : 'bg-sanger' %>"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <!-- Body -->
+                        <div class="card-body">
+                            <% if(isOpen){ %>
+                                <form name="this_form" id="this_form" method="POST" action="<%= ConfigLabels.storeUrl %>" role="form" enctype="multipart/form-data">
+                                    <div class="row">
+
+                                        <input type="hidden" name="ticketId" class="form-control"
+                                               value="<%= _id %>">
+                                        <div class="col-12 col-sm-6">
+                                            <div class="form-group">
+                                                <label class="">Message</label>
+                                                <textarea name="message" class="form-control requiredData replayMessage"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label class="">Attachments</label>
+                                                <div class="input-group">
+                                                    <div class="custom-file">
+                                                        <input type="file" name="attachments" class="custom-file-input" id="attachments" multiple>
+                                                        <label class="custom-file-label" for="attachments">Choose file</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn bg-gradient-secondary btn-in-form btnSubmitReplay">
+                                                    <i class="fas fa-paper-plane"></i> Send
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+                            <% } %>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <% if(!isDeleted) {%>
+                                        <a class="btn bg-gradient-danger d-inline float-right mr-2 " href="<%= ConfigLabels.deleteUrl %>">Delete</a>
+                                    <%}%>
+
+                                    <!-- Close Ticket -->
+                                    <form name="this_form" id="this_form" method="POST" action="<%= ConfigLabels.statusUrl %>" role="form">
+                                        <input type="hidden" name="ticketId" class="form-control" value="<%= _id %>">
+                                        <input type="hidden" name="isOpen" class="form-control" value="<%= isOpen %>">
+
+                                        <button type="submit" class="btn  mr-2 <%= isOpen ? 'bg-gradient-warning' : 'bg-gradient-success' %> d-inline float-right">
+                                            <%= isOpen ? 'Close Ticket' : 'Reopen Ticket' %>
+                                        </button>
+                                    </form>
+                                    <!-- / Close Ticket -->
+
+
+
+                                    <button class="btn bg-gradient-secondary d-inline float-right mr-2" onclick="history.back()">
+                                        <i class="fa fa-arrow-left" aria-hidden="true"></i>&ensp;Go Back
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Quick Replies</h3>
+                                        </div>
+
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm table-hover quickReplayBox">
+                                                <thead>
+                                                <!--<tr>
+                                                    <th style="width: 10px">#</th>
+                                                    <th>Title</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                                </thead>-->
+                                                <tbody>
+
+                                                <% quickReplies.forEach((r, i)=>{ %>
+                                                    <tr class="c-pointer selectQuickReplay">
+                                                        <td><i class="fas fa-check opacity-0 replaySelected"></i></td>
+                                                        <td class="quickReplayTag"><%= r.title %></td>
+                                                        <td class="quickReplayDescription"><%= r.description %></td>
+                                                    </tr>
+                                                <% }) %>
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+                                        <div class="card-footer ">
+                                            <button type="submit" class="btn btn-sm bg-gradient-secondary btnSubmitQuickReplay">
+                                                <i class="fas fa-paper-plane"></i> Send
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- / Body -->
+
+
+                    <!-- Footer -->
+                    <div class="card-footer">
+
+                    </div>
+                    <!-- / Footer -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Script ------------------------------------------------------------>
+<%- contentFor('script') %>
+<script>
+
+
+    $(document).on('click', '.selectQuickReplay', function() {
+        const el = $(this);
+        $('.quickReplayBox .replaySelected').addClass('opacity-0');
+        el.find('.replaySelected').removeClass('opacity-0');
+        const selectedReplay = el.find('.quickReplayDescription').text();
+        $('.replayMessage').text(selectedReplay);
+    })
+    $(document).on('click', '.btnSubmitQuickReplay', function() {
+        $('.btnSubmitReplay').trigger('click');
+    })
+
+    /*$(document).ready(function () {
+        let message = $('.timeline-header').text().replaceAll('\n', ' ').replace(/\s+/g,' ').trim().toLowerCase();
+        let replyTagEl = $('.quickReplayBox .quickReplayTag');
+        let ignoreWord = ['as','per','for','we','are','not','to','your','or','number','my','have','and','will','let','you','if','with','this','has','been','us','it','on','soon','roi','that','is','in','any','day','then','be','the','it\'s','try','a','can','at',];
+        replyTagEl.each(i => {
+            const tagRow = $(replyTagEl[i]);
+            let tags = tagRow.text().split(' ');
+            for (const i in tags) {
+                const findText = tags[i].trim().toLowerCase();
+
+                if(!ignoreWord.includes(findText) && message.search(findText) >= 0) {
+                    tags[i] = `<span class="hilighter text-danger">${tags[i]}</span>`
+                }
+            }
+            tagRow.html(tags.join(' '));
+        });
+
+        replyTagEl = $('.quickReplayBox .quickReplayDescription');
+        replyTagEl.each(i => {
+            const tagRow = $(replyTagEl[i]);
+            let tags = tagRow.text().split(' ');
+            for (const i in tags) {
+                const findText = tags[i].trim().toLowerCase();
+                if(!ignoreWord.includes(findText) && message.search(findText) >= 0) {
+                    tags[i] = `<span class="hilighter text-warning">${tags[i]}</span>`
+                }
+            }
+            tagRow.html(tags.join(' '));
+        });
+
+        /!*replyTagEl = $('.quickReplayBox .selectQuickReplay');
+        let oldMatches = 0;
+        replyTagEl.each(i => {
+            const tagRow = $(replyTagEl[i]);
+            // debugger
+            const matchLength = tagRow.find('hilighter').length;
+            if(matchLength >= oldMatches) {
+                oldMatches = matchLength;
+                replyTagEl.find('td').removeClass('bg-info');
+            } else if (matchLength === oldMatches) {
+                tagRow.find('td').addClass('bg-info');
+            }
+
+        });*!/
+    })*/
+</script>

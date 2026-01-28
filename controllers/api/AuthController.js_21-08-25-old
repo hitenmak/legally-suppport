@@ -1,0 +1,447 @@
+// Models
+const User = require('../../models/User');
+
+// Helpers
+const {d, dd, empty, checkValidation, getBool, getStr, getVal, getFullUrl, filterUsername} = require('../../helpers/helpers');
+const {makeHashPassword, matchHashPassword, generateJwtToken} = require('../../helpers/auth');
+const MakeData = require('../../helpers/makeData');
+const Msg = require('../../messages/api');
+const Constant = require('../../config/Constant');
+
+
+//---------------------------------------------------------------------------------------------
+
+
+// Register
+exports.register = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    try {
+        d(reqData, 'reqData')
+        // Check validation {
+        const isInvalid = checkValidation(reqData, {
+            phone: 'required',
+            name: 'required',
+            email: 'required',
+          //  username: 'required',
+            password: 'required',
+
+        });
+        d(isInvalid, 'isInvalid')
+        if(isInvalid) return ret.sendFail(isInvalid);
+        // } Check validation
+
+        const isExistPhone = await User.findOne({phone: reqData.phone}).exec();
+        if(!empty(isExistPhone)) return ret.sendFail(Msg.auth.phoneAlreadyExist);
+
+        const isExistEmail = await User.findOne({email: filterUsername(reqData.email)}).exec();
+        if(!empty(isExistEmail)) return ret.sendFail(Msg.auth.emailAlreadyExist);
+
+        const isExistUsername = await User.findOne({username: filterUsername(reqData.username)}).exec();
+        if(!empty(isExistUsername)) return ret.sendFail(Msg.auth.usernameAlreadyExist);
+
+
+        const {hash, salt} = makeHashPassword(reqData.password);
+        let newRecord = {
+            name: getVal(reqData.name),
+            username: getVal(filterUsername(reqData.username)),
+            email: getVal(filterUsername(reqData.email)),
+            phone: getVal(reqData.phone),
+        }
+
+        newRecord.hash = hash;
+        newRecord.salt = salt;
+
+        let updatedRecord = await User.create(newRecord);
+
+        updatedRecord.save();
+        updatedRecord = updatedRecord?.toObject();
+
+        if(empty(updatedRecord)) return ret.sendFail();
+        const resData = MakeData.userProfile({...updatedRecord});
+
+        // Token {
+        ret.accessToken = generateJwtToken(MakeData.authUserToken(updatedRecord));
+        // } Token
+
+        ret.sendSuccess(resData, Msg.auth.accountCreated);
+
+    } catch(error) {
+        dd(error, 'error');
+        ret.err500(error);
+    }
+
+
+};
+
+
+// Login
+exports.login = async (req, res) => {
+    const ret = res.ret;
+    const reqData = req.body;
+
+    // Validate request data
+    const isInvalid = checkValidation(reqData, {
+        email: 'required',
+        password: 'required',
+    });
+    if (isInvalid) return ret.sendFail(isInvalid);
+
+    try {
+        const user = await User.findOne({
+            email: filterUsername(reqData.email),
+        });
+
+        if (empty(user)) return ret.sendFail(Msg.auth.credentialNotMatch);
+        if (empty(user.hash) || empty(user.salt)) {
+            return ret.sendSuccess({ isForgotPassword: true }, Msg.password.resetNew);
+        }
+
+        const isPasswordValid = matchHashPassword(getStr(reqData.password), user.hash, user.salt);
+
+        if (!isPasswordValid) return ret.sendFail(Msg.auth.credentialNotMatch);
+
+        // Generate tokens
+        ret.accessToken = generateJwtToken(MakeData.authUserToken(user));
+
+        const resData = MakeData.userProfile(user);
+        return ret.sendSuccess(resData, user.isOtpEnable ? Msg.otp.otpSend : Msg.auth.loginSuccess);
+
+    } catch (err) {
+        ret.err500(err);
+    }
+};
+
+
+
+// Otp Resend
+exports.otpResend = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+    const _user = req._user;
+    const otp = await DataManipulate.sendOtp(req.uid);
+    if(empty(otp)) return ret.sendFail();
+    return ret.sendSuccess({email: _user.email}, Msg.otp.otpSend);
+
+};
+
+
+// Otp Verify
+exports.otpVerify = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+    const _user = req._user;
+
+    // Check validation {
+    const isInvalid = checkValidation(reqData, {
+        otp: 'required',
+    });
+    if(isInvalid) return ret.sendFail(isInvalid);
+    // } Check validation
+
+    // if(_user.otp === '-NO-OTP-') reqData.otp='-NO-OTP-'; // TODO: REMOVE IN FINAL
+
+
+    const otpNotVerify = await DataManipulate.verifyOtp(req.uid, reqData.otp, false);
+    if(otpNotVerify) return ret.sendFail(otpNotVerify);
+
+    User.findById(req.uid).populate('sponsorId').then(async record => {
+
+        if(empty(record)) return ret.sendFail(Msg.auth.credentialNotMatch);
+
+        const resData = MakeData.userProfile(record);
+        resData.token = generateJwtToken(MakeData.authUserToken(record));
+
+        _user.isVerified = true;
+        await _user.save();
+
+
+        ret.sendSuccess(resData, Msg.otp.otpVerified);
+    }).catch(e => ret.err500(e));
+
+};
+
+
+// Forgot Password
+exports.forgotPassword = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    // Check validation {
+    const isInvalid = checkValidation(reqData, {
+        username: 'required',
+    });
+    if(isInvalid) return ret.sendFail(isInvalid);
+    // } Check validation
+
+    User.findOne({username: filterUsername(reqData.username), isTerminated: {$in: [null, false]}}).then(async record => {
+
+        if(empty(record)) return ret.sendFail(Msg.auth.usernameNotFound);
+
+        const otp = await DataManipulate.sendOtp(record._id);
+        if(empty(otp)) return ret.sendFail();
+
+        // Token {
+        ret.accessToken = generateJwtToken(MakeData.authUserToken(record));
+        const refreshTokenPayload = await DataManipulate.updateRefreshToken(record._id, ret.accessToken);
+        if(empty(refreshTokenPayload) || empty(refreshTokenPayload.refreshToken)) res.throw('Throw: token not updated');
+        ret.refreshToken = refreshTokenPayload.refreshToken;
+        // } Token
+
+        ret.sendSuccess({email: record.email}, Msg.otp.otpSend);
+
+    }).catch(e => ret.err500(e));
+
+};
+
+
+// Set Password
+exports.setPassword = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    // Check validation {
+    const isInvalid = checkValidation(reqData, {
+        password: 'required',
+    });
+    if(isInvalid) return ret.sendFail(isInvalid);
+    // } Check validation
+
+
+    User.findById(req.uid).populate('sponsorId').then(async record => {
+
+        if(empty(record)) return ret.sendFail();
+
+        const {hash, salt} = makeHashPassword(reqData.password);
+
+        record.hash = hash;
+        record.salt = salt;
+
+        record.save().then(updatedRecord => {
+
+            if(empty(updatedRecord)) return ret.sendFail();
+            const resData = MakeData.userProfile(updatedRecord);
+            resData.token = generateJwtToken(MakeData.authUserToken(updatedRecord));
+
+            ret.sendSuccess(resData, Msg.password.passwordChange);
+
+        }).catch(e => ret.err500(e));
+
+    }).catch(e => ret.err500(e));
+
+
+};
+
+
+// Change Password
+exports.changePassword = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    // Check validation {
+    const isInvalid = checkValidation(reqData, {
+        oldPassword: 'required',
+        password: 'required',
+    });
+    if(isInvalid) return ret.sendFail(isInvalid);
+    // } Check validation
+
+
+    User.findById(req.uid).populate('sponsorId').then(async record => {
+
+        if(empty(record)) return ret.sendFail();
+
+        if(!matchHashPassword(getStr(reqData.oldPassword), record.hash, record.salt)) return ret.sendFail(Msg.password.oldPasswordNotMatch);
+
+        if(reqData.oldPassword === reqData.password) return ret.sendFail(Msg.password.passwordSame);
+
+        const {hash, salt} = makeHashPassword(reqData.password);
+
+        record.hash = hash;
+        record.salt = salt;
+
+        record.save().then(updatedRecord => {
+
+            if(empty(updatedRecord)) return ret.sendFail();
+            const resData = MakeData.userProfile(updatedRecord);
+            resData.token = generateJwtToken(MakeData.authUserToken(updatedRecord));
+
+            ret.sendSuccess(resData, Msg.password.passwordChange);
+
+        }).catch(e => ret.err500(e));
+
+    }).catch(e => ret.err500(e));
+
+
+};
+
+
+// Two-Factor Auth Qrcode
+exports.twoFactorAuthQrcode = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    const qr = await DataManipulate.get2faQrData(req.uid);
+    if(empty(qr)) return res.sendFail();
+    const resData = {
+        qrcodeKey: qr.key,
+        qrBase64: qr.urlData,
+        // url: getFullUrl('/user/2fa/' + TwoFactorAuth.encrypt(req.uid + '')),
+    };
+    ret.sendSuccess(resData, Msg.twoFactorAuth.qrGenerated);
+
+};
+
+
+// Two-Factor Auth Verify
+exports.twoFactorAuthVerify = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+    const _user = req._user;
+
+    // Check validation {
+    const isInvalid = checkValidation(reqData, {
+        token: 'required',
+    });
+    if(isInvalid) return ret.sendFail(isInvalid);
+    // } Check validation
+
+    const isVerify = await DataManipulate.verify2faToken(reqData.token, req.uid);
+    if(empty(isVerify)) return res.sendFail();
+    // const message = isVerify ? Msg.twoFactorAuth.tokenVerified : Msg.twoFactorAuth.tokenNotMatch;
+
+    if(!isVerify) return ret.sendFail(Msg.twoFactorAuth.tokenNotMatch);
+
+    _user.is2faEnable = true;
+    await _user.save();
+
+    // Token {
+    ret.accessToken = generateJwtToken(MakeData.authUserToken(_user));
+    const refreshTokenPayload = await DataManipulate.updateRefreshToken(_user._id, ret.accessToken);
+    if(empty(refreshTokenPayload) || empty(refreshTokenPayload.refreshToken)) res.throw('Throw: token not updated');
+    ret.refreshToken = refreshTokenPayload.refreshToken;
+    // } Token
+    let sponsorUser = {};
+    // dd(_user.sponsorId);
+    if(_user.sponsorId && !empty(_user.sponsorId.toString())) {
+        sponsorUser = await User.findById(_user.sponsorId).lean().exec();
+        // if (empty(sponsorUser)) return ret.sendFail(Msg.auth.invalidReferralId);
+        // sponsorId = sponsorUser._id;
+    }
+    // dd(sponsorUser);
+
+    const resData = MakeData.userProfile({..._user._doc, sponsorId: sponsorUser});
+    ret.sendSuccess(resData, Msg.twoFactorAuth.tokenVerified);
+
+};
+
+
+// Two Factor Auth Status
+exports.twoFactorAuthStatus = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    // Check validation {
+    const isInvalid = checkValidation(reqData, {
+        is2faEnable: 'required|boolean',
+    });
+    if(isInvalid) return ret.sendFail(isInvalid);
+    // } Check validation
+
+    User.findById(req.uid).populate('sponsorId').then(async record => {
+        if(empty(record)) return ret.sendFail();
+
+        record.is2faEnable = getBool(reqData.is2faEnable);
+
+        record.save().then(async updatedRecord => {
+            if(empty(updatedRecord)) return ret.sendFail();
+
+            const resData = MakeData.userProfile(updatedRecord);
+            ret.sendSuccess(resData, updatedRecord.is2faEnable ? Msg.profile.enable2fa : Msg.profile.disable2fa);
+
+        }).catch(e => ret.err500(e));
+    }).catch(e => ret.err500(e));
+
+};
+
+
+// Check User
+exports.checkUser = async(req, res) => {
+    const ret = res.ret;
+    try {
+        const reqData = req.body;
+
+        // Check validation {
+        const isInvalid = checkValidation(reqData, {
+            referenceUsername: 'required',
+        });
+        if(isInvalid) return ret.sendFail(isInvalid);
+        // } Check validation
+
+
+        const referenceUser = await User.findOne({...Constant.userActiveFilter, username: filterUsername(reqData.referenceUsername)}).exec();
+        if(empty(referenceUser)) return ret.sendFail(Msg.userProfile.usernameNotFound);
+
+        // } Check valid data
+
+        const resData = MakeData.userProfileShort(referenceUser);
+
+        return ret.sendSuccess(resData, Msg.userProfile.detailsFound);
+
+    } catch(err) {
+        ret.err500(err);
+    }
+};
+
+
+// Logout
+exports.logout = async(req, res) => {
+    const ret = res.ret;
+    const reqData = req.body;
+    await DataManipulate.clearNotificationToken(reqData, req.uid);
+
+    User.findByIdAndUpdate(req.uid, {refreshToken: null})
+
+    return ret.sendSuccess({}, Msg.auth.logout);
+
+};
+
+
+// Check Email
+exports.checkEmail = async(req, res) => {
+
+    const ret = res.ret;
+    const reqData = req.body;
+
+    try {
+        d(reqData, 'reqData')
+        // Check validation {
+        const isInvalid = checkValidation(reqData, {
+            email: 'required',
+        });
+        if(isInvalid) return ret.sendFail(isInvalid);
+        // } Check validation
+
+        const isExistEmail = await User.findOne({email: filterUsername(reqData.email)}).exec();
+        d(isExistEmail, 'isExistEmail')
+        if(!empty(isExistEmail)) return ret.sendSuccess({}, Msg.auth.emailAlreadyExist);
+        
+        ret.sendFail(Msg.auth.emailNotExist);
+
+    } catch(error) {
+        dd(error, 'error');
+        ret.err500(error);
+    }
+
+
+};

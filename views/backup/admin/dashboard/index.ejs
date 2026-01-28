@@ -1,0 +1,234 @@
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Dashboard</h1>
+                </div>
+                <!--                <div class="col-sm-6">-->
+                <!--                    <div class="row justify-content-end mr-1">-->
+                <!--                        <a href="<%= ConfigLabels.addUrl; %>" class="btn bg-gradient-secondary btn-sm">+ Add</a>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+            </div>
+        </div>
+    </section>
+    <!-- / Page Header -->
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-cog"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Users</span>
+                            <span class="info-box-number"><h3>16</h3></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-thumbs-up"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Properties</span>
+                            <span class="info-box-number"><h3>0</h3></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="clearfix hidden-md-up"></div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Agents</span>
+                            <span class="info-box-number"><h3>0</h3></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+<!--                <div class="col-12 col-sm-6 col-md-3">-->
+<!--                    <div class="info-box mb-3">-->
+<!--                        <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-users"></i></span>-->
+<!--                        <div class="info-box-content">-->
+<!--                            <span class="info-box-text">Total Staked Coins</span>-->
+<!--                            <span class="info-box-number"><h3>0</h3></span>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+
+<!--                </div>-->
+
+            </div>
+
+            <div class="row">
+
+
+                <div class="col-md-6">
+
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recently Added Users</h3>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <ul class="products-list product-list-in-card pl-2 pr-2">
+
+                                <li class="item">
+                                    <div class="product-img">
+                                        <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
+                                    </div>
+                                    <div class="product-info">
+                                        <a href="javascript:void(0)" class="product-title">Stone Colon
+                                            <span class="product-description">lerihybyki@mailinator.com</span> </a>
+                                    </div>
+                                </li>
+
+                                <li class="item">
+                                    <div class="product-img">
+                                        <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
+                                    </div>
+                                    <div class="product-info">
+                                        <a href="javascript:void(0)" class="product-title">Tad Beard
+                                            <span class="product-description">tad@mailinator.com</span> </a>
+                                    </div>
+                                </li>
+
+                                <li class="item">
+                                    <div class="product-img">
+                                        <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
+                                    </div>
+                                    <div class="product-info">
+                                        <a href="javascript:void(0)" class="product-title">Alexis Ortega
+                                            <span class="product-description">alexis@mailinator.com</span> </a>
+                                    </div>
+                                </li>
+
+                                <li class="item">
+                                    <div class="product-img">
+                                        <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
+                                    </div>
+                                    <div class="product-info">
+                                        <a href="javascript:void(0)" class="product-title">Sarah Barnes
+                                            <span class="product-description">sarah@mailinator.com</span> </a>
+                                    </div>
+                                </li>
+
+                                <li class="item">
+                                    <div class="product-img">
+                                        <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
+                                    </div>
+                                    <div class="product-info">
+                                        <a href="javascript:void(0)" class="product-title">Kenneth Bond
+                                            <span class="product-description">kenneth@mailinator.com</span> </a>
+                                    </div>
+                                </li>
+
+
+                            </ul>
+                        </div>
+
+                        <div class="card-footer text-center">
+                            <a href="<%= _.getFullUrl('users') %>" class="uppercase">View All Users</a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+
+                    <div class="card">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Recently Added Properties</h3>
+
+                        </div>
+
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table m-0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>Valuation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr>
+                                            <td><a href="#">1</a></td>
+                                            <td>Stone Colon</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">Bolton Landing, NY 12814</div></td>
+                                            <td><span class="badge badge-warning">$700000</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">2</a></td>
+                                            <td>Tad Beard</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">Reston, MD 22090</div></td>
+                                            <td><span class="badge badge-warning">$500000</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">3</a></td>
+                                            <td>Alexis Ortega</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">Gadsden, AL 35901</div></td>
+                                            <td><span class="badge badge-warning">$1500000</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">4</a></td>
+                                            <td>Sarah Barnes</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">East Northport, NY 11731</div></td>
+                                            <td><span class="badge badge-warning">$2000000</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">5</a></td>
+                                            <td>Kenneth Bond</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">Sidney, IA 51652</div></td>
+                                            <td><span class="badge badge-warning">$3300000</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">6</a></td>
+                                            <td>Ulla Shields</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">San Luis Obispo, CA 93401</div></td>
+                                            <td><span class="badge badge-warning">$650000</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">7</a></td>
+                                            <td>Roary Johns</td>
+                                            <td><div class="sparkbar" data-color="#00a65a" data-height="20">1061 Leisure Lane</div></td>
+                                            <td><span class="badge badge-warning">$1000000</span></td>
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </section>
+</div>
