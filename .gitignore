@@ -1,17 +1,13 @@
-node_modules/
-database/
 .zip
 .env
 .idea
-.idea/*
+.vscode
+
+node_modules/
+database/
+
 package-lock.json
-!public/storage/default
-!public/storage/gifts
-!public/storage/newifc-gifts
-!public/storage/performance-meter
-public/storage/*
+public/storage/support-attachment*
 
 dataSources.xml
-.idea/dataSources.xml
 desktop.ini
-.vscode
