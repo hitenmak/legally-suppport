@@ -16,6 +16,7 @@ const AuthController = require('../controllers/api/AuthController');
 const SupportTicketController = require('../controllers/api/SupportTicketController');
 const CategoryController = require('../controllers/api/CategoryController');
 const SubCategoryController = require('../controllers/api/SubcategoryController');
+const QuestionController = require('../controllers/api/QuestionController');
 //----------------------------------------------
 
 
@@ -105,6 +106,11 @@ router.post('/category/create', CategoryController.create);
 // SubCategory
 router.post('/sub-category/list', SubCategoryController.list);
 router.post('/sub-category/create', SubCategoryController.create);
+
+
+router.post('/question/list', QuestionController.list);
+// router.post('/sub-category/create', SubCategoryController.create);
+
 //----------------------------------------------
 
 module.exports = router;

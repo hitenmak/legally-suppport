@@ -1,6 +1,6 @@
 // Models
 const { Lambda } = require('aws-sdk');
-const Subcategory = require('../../models/Subcategory');
+const SubCategory = require('../../models/SubCategory');
 
 
 // Helpers
@@ -22,7 +22,7 @@ exports.list = async (req, res) => {
 		const isExist = await Category.findOne({ _id: reqData?.categoryId }).exec();
 		if (!isExist) return ret.sendFail('Category does not exist');
 
-		let list = await Subcategory.find({ categoryId: reqData?.categoryId }).exec();
+		let list = await SubCategory.find({ categoryId: reqData?.categoryId }).exec();
 		list = list.map((r) => {
 			return {
 				id: (r?._id),
@@ -51,9 +51,9 @@ exports.create = async (req, res) => {
 		const isCategoryExist = await Category.findOne({ _id: reqData?.categoryId }).exec()
 		if (!isCategoryExist) return ret.sendFail('Category does not exist');
 
-		const isExist = await Category.findOne({ name: reqData?.name }).exec()
-		if (isExist) return ret.sendFail('Category already exist');
-		const subCategory = new Subcategory(reqData);
+		const isExist = await SubCategory.findOne({ name: reqData?.name }).exec()
+		if (isExist) return ret.sendFail('SubCategory already exist');
+		const subCategory = new SubCategory(reqData);
 		await subCategory.save();
 		ret.sendSuccess(subCategory);
 	} catch (error) {

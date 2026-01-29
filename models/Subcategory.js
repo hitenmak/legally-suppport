@@ -11,4 +11,4 @@ const schema = new Mongoose.Schema({
 
 schema.plugin(paginate);
 
-module.exports = Mongoose.model('Subcategory', schema);
+module.exports = Mongoose.model('SubCategory', schema);
