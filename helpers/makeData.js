@@ -2,7 +2,7 @@ const moment = require('moment');
 
 // Helpers
 const Constant = require('../config/Constant');
-const {dd, empty, getNum, getStr, getBool, timeSince, getDateFormat, isEqual, objMaker, formatNumber, relNumberDiffPer, cardNoFormat, generateQrcode, getFixedDecimal} = require('./helpers');
+const { dd, empty, getNum, getStr, getBool, timeSince, getDateFormat, isEqual, objMaker, formatNumber, relNumberDiffPer, cardNoFormat, generateQrcode, getFixedDecimal } = require('./helpers');
 const Media = require('../infrastructure/Media/Media');
 const Msg = require('../messages/api');
 const Message = require('../config/Message');
@@ -64,7 +64,7 @@ const reply = (row, user) => {
         _id: row._id,
         replyBy,
         message: getStr(row.message),
-        attachments: objMaker(attachments || [], {'_id:_id': '', 'srcUrl:src': Media.getSupportAttachment}),
+        attachments: objMaker(attachments || [], { '_id:_id': '', 'srcUrl:src': Media.getSupportAttachment }),
         replyAt: getDateFormat(row.createdAt, 'D MMM YY, h:mm:ss A'),
     };
 };
@@ -76,10 +76,14 @@ exports.supportTicketDetails = (row) => {
         _id: row._id,
         ticketId: getStr(row.ticketId),
         isOpen: row.isOpen,
-        requestType: Constant.ticketRequestType[row.requestType],
+        // requestType: Constant.ticketRequestType[row.requestType],
         reply: (row.reply.length ? row.reply.map(r => {
             return reply(r, row.userId);
         }) : []),
+        categoryId: row.categoryId,
+        subCategoryId: row.subCategoryId,
+        acceptedBy: row?.acceptedBy,
+        acceptedAt: row?.acceptedAt,
         createdAt: getDateFormat(row.createdAt, 'D MMM YY, h:mm:ss A'),
     };
 };

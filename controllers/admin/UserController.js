@@ -7,8 +7,8 @@ const SupportTicket = require('../../models/SupportTicket');
 
 
 // Helpers
-const {d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, timeSince, formatNumber, toObjectId, isObjectId, getStr, getVal, filterUsername, getDateFormat, objMaker, getFixedDecimal} = require('../../helpers/helpers');
-const {getFullUrlAction} = require('../../helpers/ejsHelpers');
+const { d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, timeSince, formatNumber, toObjectId, isObjectId, getStr, getVal, filterUsername, getDateFormat, objMaker, getFixedDecimal } = require('../../helpers/helpers');
+const { getFullUrlAction } = require('../../helpers/ejsHelpers');
 const Msg = require('../../messages/admin');
 const Constant = require('../../config/Constant');
 const Media = require('../../infrastructure/Media/Media');
@@ -19,11 +19,11 @@ const Pager = require('../../infrastructure/Pager');
 
 
 // Index View
-exports.index = async(req, res) => {
+exports.index = async (req, res) => {
     const ret = res.ret;
-    try{
+    try {
         return ret.render('user/list', {});
-    }catch(err){
+    } catch (err) {
         console.error(err, 'err-user-index');
         return ret.err500(err);
     }
@@ -31,15 +31,15 @@ exports.index = async(req, res) => {
 
 
 // list
-exports.list = async(req, res) => {
+exports.list = async (req, res) => {
     const ret = res.ret;
     try {
         const reqData = req.body;
         let filters = {};
-        
+
         // Page calculation {
         const Pgr = new Pager(reqData);
-        if(Pgr.isValidData) return ret.sendFail(Pgr.isValidData);
+        if (Pgr.isValidData) return ret.sendFail(Pgr.isValidData);
         let isSortCreatedAt = reqData?.orderBy?.createdAt && (Object.keys(reqData?.orderBy).length == 1) && Object.keys(reqData?.orderBy)[0] == 'createdAt';
         let options = {
             page: reqData?.pageNumber || 1,
@@ -51,7 +51,7 @@ exports.list = async(req, res) => {
         // } Page calculation
 
         // Filters {
-        if(!empty(Pgr.commonSearchFilters)) filters = {...Pgr.commonSearchFilters};
+        if (!empty(Pgr.commonSearchFilters)) filters = { ...Pgr.commonSearchFilters };
         // d(filters, 'filters');
         // } Filters
 
@@ -61,7 +61,7 @@ exports.list = async(req, res) => {
 
 
         let newRecords = [];
-        if(!empty(pager.docs)) {
+        if (!empty(pager.docs)) {
             (pager.docs || []).forEach((row, i) => {
                 let user = row._id || {};
                 // dd(user);
@@ -78,24 +78,24 @@ exports.list = async(req, res) => {
                 newRecords.push(row);
             });
         }
-        const resData = {records: newRecords, pageNumber: pager.page, totalPages: pager.totalPages, totalRecords: pager.totalDocs, limit: pager.limit,}
+        const resData = { records: newRecords, pageNumber: pager.page, totalPages: pager.totalPages, totalRecords: pager.totalDocs, limit: pager.limit, }
 
         ret.sendSuccess(resData, 'Record found');
-    } catch(e) { console.log(e); ret.err500(e); }
+    } catch (e) { console.log(e); ret.err500(e); }
 };
 
 // Details
-exports.details = async(req, res) => {
+exports.details = async (req, res) => {
     const ret = res.ret;
     const id = req.params.id || '';
-    const resData = {record: {}};
-    const filters = isObjectId(id) ? {_id: id} : ((new RegExp(`(0x)[a-zA-Z0-9]{1,40}`).test(id)) ? {walletAddress: {$regex: id, $options: 'i'}} : {username: id.toLowerCase()});
+    const resData = { record: {} };
+    const filters = isObjectId(id) ? { _id: id } : ((new RegExp(`(0x)[a-zA-Z0-9]{1,40}`).test(id)) ? { walletAddress: { $regex: id, $options: 'i' } } : { username: id.toLowerCase() });
     let record = await User.findOne(filters).populate('sponsorId').lean().exec();
-    if(empty(record)) {
-        const walletHistoryRecord = await WalletHistory.findOne({transactionId: id}).lean().exec();
-        if(empty(walletHistoryRecord)) return ret.goBackError()
-        record = await User.findOne({_id: walletHistoryRecord.userId}).populate('sponsorId').lean().exec();
-        if(empty(record)) return ret.goBackError();
+    if (empty(record)) {
+        const walletHistoryRecord = await WalletHistory.findOne({ transactionId: id }).lean().exec();
+        if (empty(walletHistoryRecord)) return ret.goBackError()
+        record = await User.findOne({ _id: walletHistoryRecord.userId }).populate('sponsorId').lean().exec();
+        if (empty(record)) return ret.goBackError();
     }
 
     record.profileImage = Media.getAdminUserImage(record.profileImage);
@@ -117,7 +117,7 @@ exports.details = async(req, res) => {
     record.sponsor = {};
 
     // Direct Referral Members
-    var directReferralMembers = await User.find({sponsorId: record?._id+''}).lean() || [];
+    var directReferralMembers = await User.find({ sponsorId: record?._id + '' }).lean() || [];
     record.directReferralMembers = [];
     directReferralMembers.forEach((directReferralMember, i) => {
         var phoneCode = directReferralMember.phoneCode || '';
@@ -132,7 +132,7 @@ exports.details = async(req, res) => {
     });
     // Direct Referral Members
 
-    if(!empty(record.sponsorId)) {
+    if (!empty(record.sponsorId)) {
         var phoneCode = record.sponsorId?.phoneCode || '';
         var phone = record.sponsorId?.phone || '';
         record.sponsor = {
@@ -157,7 +157,7 @@ exports.details = async(req, res) => {
         record.lastActiveHistory[i] = getDateFormat(v, 'D MMM YY, h:mm:ss A');
     });
 
-    record = {...record, ...await DataManipulate.userRewardWallet(record._id)};
+    record = { ...record, ...await DataManipulate.userRewardWallet(record._id) };
 
     record.myTeam = {}; //await DataManipulate.getMyState(record._id);
     record.ifxMyTeam = {}; // await DataManipulate.getMyStateIfx(record);
@@ -170,15 +170,15 @@ exports.details = async(req, res) => {
     const startOfPreviousMonth = moment().subtract(1, 'months').startOf('month').startOf('day');
     const endOfPreviousMonth = moment().subtract(1, 'months').endOf('month').endOf('day');
     const queryArr = [
-        DailyIncome.find({userId: record._id}).sort({date: -1}).limit(10),
-        LevelIncome.find({userId: record._id}).sort({date: -1}).limit(10),
-        WithdrawRequest.find({userId: record._id}).sort({createdAt: -1}).limit(10),
-        BonusIncome.find({userId: record._id}),
-        WalletHistory.find({userId: record._id}).sort({createdAt: -1}).limit(10),
-        WithdrawRequestUsdt.find({userId: record._id}).sort({createdAt: -1}).limit(10),
+        DailyIncome.find({ userId: record._id }).sort({ date: -1 }).limit(10),
+        LevelIncome.find({ userId: record._id }).sort({ date: -1 }).limit(10),
+        WithdrawRequest.find({ userId: record._id }).sort({ createdAt: -1 }).limit(10),
+        BonusIncome.find({ userId: record._id }),
+        WalletHistory.find({ userId: record._id }).sort({ createdAt: -1 }).limit(10),
+        WithdrawRequestUsdt.find({ userId: record._id }).sort({ createdAt: -1 }).limit(10),
         DirectReferralIncome.aggregate([
             { $match: { userId: record._id, createdAt: { $gte: new Date(startOfPreviousMonth), $lte: new Date(endOfCurrentMonth) } } },
-            { $lookup: { from: 'users', localField: 'referralUserId', foreignField: '_id', as: 'user'} },
+            { $lookup: { from: 'users', localField: 'referralUserId', foreignField: '_id', as: 'user' } },
             { $unwind: '$user' },
             {
                 $facet: {
@@ -205,7 +205,7 @@ exports.details = async(req, res) => {
                 }
             },
         ]),
-        Stake.find({userId: record._id}).sort({date: -1}).limit(10),
+        Stake.find({ userId: record._id }).sort({ date: -1 }).limit(10),
     ]
     const [
         dailyIncome,
@@ -429,7 +429,7 @@ exports.details = async(req, res) => {
             'referralUserId:user': (user) => getStr(user._id),
             'referralName:user': (user) => getStr(user.name),
             'referralUsername:user': (user) => getStr(user.username),
-            'referralUserUrl:user': (user) => `${getFullUrlAction('user/details/'+getStr(user._id))}`,
+            'referralUserUrl:user': (user) => `${getFullUrlAction('user/details/' + getStr(user._id))}`,
             'name:user': (user) => getStr(user.name),
             'stake:stake': getStr,
             'status:status': getStr,
@@ -441,7 +441,7 @@ exports.details = async(req, res) => {
             'referralUserId:user': (user) => user._id,
             'referralName:user': (user) => getStr(user.name),
             'referralUsername:user': (user) => getStr(user.username),
-            'referralUserUrl:user': (user) => `${getFullUrlAction('user/details/'+user._id)}`,
+            'referralUserUrl:user': (user) => `${getFullUrlAction('user/details/' + user._id)}`,
             'name:user': (user) => getStr(user.name),
             'stake:stakeAmount': formatNumber,
             'status:status': getStr,
@@ -449,8 +449,8 @@ exports.details = async(req, res) => {
     }
 
     // support Tickets {
-    const supportTickets = await SupportTicket.find({userId: record._id, isDeleted: {$ne: true}}).sort('-_id').lean() || [];
-    record.supportTickets = objMaker(supportTickets, {'_id:_id': '', 'ticketId:ticketId': '', 'isOpen:isOpen': getBool, 'requestType:requestType': (type)=>{return Constant.ticketRequestType[type]}, 'detailsUrl:_id': (id)=>{return getFullUrlAction('support-ticket/details/'+id)}})
+    const supportTickets = await SupportTicket.find({ userId: record._id, isDeleted: { $ne: true } }).sort('-_id').lean() || [];
+    record.supportTickets = objMaker(supportTickets, { '_id:_id': '', 'ticketId:ticketId': '', 'isOpen:isOpen': getBool, 'requestType:requestType': (type) => { return Constant.ticketRequestType[type] }, 'detailsUrl:_id': (id) => { return getFullUrlAction('support-ticket/details/' + id) } })
     record.ticketRequestType = Constant.ticketRequestType;
     // } support Tickets
 
@@ -463,19 +463,19 @@ exports.details = async(req, res) => {
 };
 
 // Update 2fa Status
-exports.update2FaStatus = async(req, res) => {
+exports.update2FaStatus = async (req, res) => {
 
     const ret = res.ret;
     let userId = req.params.id;
-    if(!isObjectId(userId)) return ret.goBackError();
+    if (!isObjectId(userId)) return ret.goBackError();
 
     let newRecord = await User.findById(userId);
-    if(empty(newRecord)) return ret.goBackError();
+    if (empty(newRecord)) return ret.goBackError();
 
     newRecord.is2faEnable = !newRecord.is2faEnable;
 
     newRecord.save().then(async updatedRecord => {
-        if(empty(updatedRecord)) return ret.goBackError();
+        if (empty(updatedRecord)) return ret.goBackError();
         ret.redirect('user/details/' + userId, updatedRecord.is2faEnable ? Msg.userProfile.enable2fa : Msg.userProfile.disable2fa);
 
     }).catch(e => ret.goBackError());
@@ -484,19 +484,19 @@ exports.update2FaStatus = async(req, res) => {
 
 
 // Update user status (enable disable user)
-exports.updateStatus = async(req, res) => {
+exports.updateStatus = async (req, res) => {
 
     const ret = res.ret;
     let userId = req.params.id;
-    if(!isObjectId(userId)) return ret.goBackError();
+    if (!isObjectId(userId)) return ret.goBackError();
 
     let newRecord = await User.findById(userId);
-    if(empty(newRecord)) return ret.goBackError();
+    if (empty(newRecord)) return ret.goBackError();
 
     newRecord.status = !newRecord.status;
 
     newRecord.save().then(async updatedRecord => {
-        if(empty(updatedRecord)) return ret.goBackError();
+        if (empty(updatedRecord)) return ret.goBackError();
         ret.redirect('user/details/' + userId, updatedRecord.status ? Msg.userProfile.enableUser : Msg.userProfile.disableUser);
 
     }).catch(e => ret.goBackError());
@@ -505,7 +505,7 @@ exports.updateStatus = async(req, res) => {
 
 
 // Update user details (enable disable user)
-exports.updateDetails = async(req, res) => {
+exports.updateDetails = async (req, res) => {
 
     const ret = res.ret;
     const reqData = req.body;
@@ -519,29 +519,29 @@ exports.updateDetails = async(req, res) => {
         email: 'required',
         phone: 'required',
     });
-    if(isInvalid) return ret.goBackError(isInvalid);
+    if (isInvalid) return ret.goBackError(isInvalid);
     // } Check validation
 
-    const isExistEmail = await User.findOne({_id: {$ne: reqData.id}, email: filterUsername(reqData.email)}).exec();
-    if(!empty(isExistEmail)) return ret.goBackError(Msg.auth.emailAlreadyExist);
+    const isExistEmail = await User.findOne({ _id: { $ne: reqData.id }, email: filterUsername(reqData.email) }).exec();
+    if (!empty(isExistEmail)) return ret.goBackError(Msg.auth.emailAlreadyExist);
 
-    const isExistPhone = await User.findOne({_id: {$ne: reqData.id}, phone: reqData.phone}).exec();
-    if(!empty(isExistPhone)) return ret.goBackError(Msg.auth.phoneAlreadyExist);
+    const isExistPhone = await User.findOne({ _id: { $ne: reqData.id }, phone: reqData.phone }).exec();
+    if (!empty(isExistPhone)) return ret.goBackError(Msg.auth.phoneAlreadyExist);
 
     let record = await User.findById(reqData.id);
-    if(empty(record)) return ret.goBackError();
+    if (empty(record)) return ret.goBackError();
 
     record.name = getVal(reqData.name);
     record.email = getVal(reqData.email);
     record.phone = getVal(reqData.phone);
 
-    if(!empty(reqData.delete_wallet_address)) {
+    if (!empty(reqData.delete_wallet_address)) {
         record.withdrawWalletAddresses = record.withdrawWalletAddresses.filter(r => {
             return (!reqData.delete_wallet_address.includes(r._id.toString()))
         })
     }
     record.save().then(async updatedRecord => {
-        if(empty(updatedRecord)) return ret.goBackError();
+        if (empty(updatedRecord)) return ret.goBackError();
         ret.goBackSuccess(Msg.userProfile.detailsUpdated);
 
     }).catch(e => {
@@ -552,26 +552,26 @@ exports.updateDetails = async(req, res) => {
 };
 
 // Update user delete/terminate (enable disable user)
-exports.deleteUser = async(req, res) => {
+exports.deleteUser = async (req, res) => {
 
     const ret = res.ret;
     let userId = req.params.id;
-    if(!isObjectId(userId)) return ret.goBackError();
+    if (!isObjectId(userId)) return ret.goBackError();
 
     let newRecord = await User.findById(userId);
-    if(empty(newRecord)) return ret.goBackError();
+    if (empty(newRecord)) return ret.goBackError();
 
     newRecord.isTerminated = !newRecord.isTerminated;
 
     newRecord.save().then(async updatedRecord => {
-        if(empty(updatedRecord)) return ret.goBackError();
+        if (empty(updatedRecord)) return ret.goBackError();
         ret.redirect('user/details/' + userId, Msg.userProfile.recover);
 
     }).catch(e => ret.goBackError());
 
 };
 
-exports.toggleChange = async(req, res) => {
+exports.toggleChange = async (req, res) => {
     const ret = res.ret;
     const reqData = req.body;
     let userId = reqData.id;
@@ -583,50 +583,50 @@ exports.toggleChange = async(req, res) => {
     if (isInvalid) {
         return ret.sendFail(isInvalid);
     }
-    
+
     let newRecord = await User.findById(reqData.id);
     if (empty(newRecord)) {
         return ret.sendFail();
     }
 
     if (reqData.dataToggleType == 'isOtpEnable') {
-        newRecord.isOtpEnable = newRecord.isOtpEnable ? false: true;
+        newRecord.isOtpEnable = newRecord.isOtpEnable ? false : true;
     }
 
     if (reqData.dataToggleType == 'isIfxLevelIncomeEnable') {
-        newRecord.isIfxLevelIncomeEnable = newRecord.isIfxLevelIncomeEnable ? false: true;
+        newRecord.isIfxLevelIncomeEnable = newRecord.isIfxLevelIncomeEnable ? false : true;
     }
     if (reqData.dataToggleType == 'isIfxWithdrawEnable') {
-        newRecord.isIfxWithdrawEnable = newRecord?.isIfxWithdrawEnable ? false: true;
+        newRecord.isIfxWithdrawEnable = newRecord?.isIfxWithdrawEnable ? false : true;
     }
 
     if (reqData.dataToggleType == 'isUsdtLevelIncomeEnable') {
-        newRecord.isUsdtLevelIncomeEnable = newRecord.isUsdtLevelIncomeEnable ? false: true;
+        newRecord.isUsdtLevelIncomeEnable = newRecord.isUsdtLevelIncomeEnable ? false : true;
     }
     if (reqData.dataToggleType == 'isUsdtWithdrawEnable') {
-        newRecord.isUsdtWithdrawEnable = newRecord?.isUsdtWithdrawEnable ? false: true;
+        newRecord.isUsdtWithdrawEnable = newRecord?.isUsdtWithdrawEnable ? false : true;
     }
 
     if (reqData.dataToggleType == 'isLevelIncomeEnable') {
-        newRecord.isLevelIncomeEnable = newRecord.isLevelIncomeEnable ? false: true;
+        newRecord.isLevelIncomeEnable = newRecord.isLevelIncomeEnable ? false : true;
     }
     if (reqData.dataToggleType == 'isIfcWithdrawEnable') {
-        newRecord.isIfcWithdrawEnable = newRecord?.isIfcWithdrawEnable ? false: true;
+        newRecord.isIfcWithdrawEnable = newRecord?.isIfcWithdrawEnable ? false : true;
     }
 
     if (reqData.dataToggleType == 'accessControlsIsTransferEnabled') {
-        newRecord.accessControls = {...newRecord?.accessControls, isTransferEnabled: !newRecord?.accessControls?.isTransferEnabled};
+        newRecord.accessControls = { ...newRecord?.accessControls, isTransferEnabled: !newRecord?.accessControls?.isTransferEnabled };
     }
 
     newRecord.save().then(async updatedRecord => {
-        if(empty(updatedRecord)) {
+        if (empty(updatedRecord)) {
             return ret.sendFail();
         }
         ret.sendSuccess(Msg.userProfile.recover);
     }).catch(e => ret.sendFail());
 };
 
-exports.rewardWalletRemoveToggleChange = async(req, res) => {
+exports.rewardWalletRemoveToggleChange = async (req, res) => {
     const ret = res.ret;
     const reqData = req.body;
     let userId = reqData.id;
@@ -637,7 +637,7 @@ exports.rewardWalletRemoveToggleChange = async(req, res) => {
     if (isInvalid) {
         return ret.sendFail(isInvalid);
     }
-    
+
     let newRecord = await User.findById(reqData.id);
     if (empty(newRecord)) {
         return ret.sendFail();
@@ -652,7 +652,7 @@ exports.rewardWalletRemoveToggleChange = async(req, res) => {
 
     newRecord.save().then(async updatedRecord => {
 
-        if(empty(updatedRecord)) {
+        if (empty(updatedRecord)) {
             return ret.sendFail();
         }
         ret.sendSuccess(Msg.userProfile.recover);

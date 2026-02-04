@@ -34,6 +34,51 @@
                 </form>
             </div>
         </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="bi bi-bell"></i>
+                <% if (notifications && notifications?.length> 0) { %>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <%= notifications?.length %>
+                    </span>
+                    <% } %>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right bg-dark overflow-scroll">
+                <% if (notifications && notifications.length> 0) { %>
+                    <% notifications.forEach(note=> { %>
+                        <!-- <a href="support-ticket/details/< %= note?.moduleId %>" class="dropdown-item"> -->
+                        <div class="dropdown-item" data-moduleid="<%= note?.moduleId %>">
+                            <div class="media notificationItem" data-id="<%= note?._id%>"
+                                data-moduleId="<%= note?.moduleId %>">
+                                <div class="media-body">
+                                    <!-- <p class="dropdown-item-title">
+                                        <%= note?.title %>
+                                    </p> -->
+                                    <p class="text-sm dropdown-item-title">
+                                        <%= note?.message %>
+                                    </p>
+                                    <!-- <p class="text-sm">
+                                            <%= note?.moduleId %>
+                                        </p> -->
+
+                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>
+                                        <%= new Date(note.createdAt).toLocaleString() %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- </a> -->
+                        <!-- <div class="dropdown-divider"></div> -->
+                        <% }) %>
+                            <% } else { %>
+                                <span class="dropdown-item text-muted">No notifications</span>
+                                <% } %>
+            </div>
+
+        </li>
+
         <!-- / Search Box -->
 
         <!-- Messages Dropdown -->
@@ -106,3 +151,29 @@
     <!-- / Right Links -->
 
 </nav>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("click", (e) => {
+            const item = e.target.closest(".notificationItem");
+            if (!item) return;
+
+            e.preventDefault();
+
+            const id = item.dataset.id;
+            const moduleId = item.dataset.moduleid;
+
+            $.ajax({
+                url: getUrl('/notifications/markAsRead'),
+                method: 'POST',
+                data: { id },
+                success: (res) => {
+                    console.log("Marked as read:", res);
+                    window.location.href = getUrl(`/support-ticket/details/${moduleId}`);
+                },
+                error: (err) => {
+                    console.error("error:", err);
+                }
+            });
+        });
+    });
+</script>

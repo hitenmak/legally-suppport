@@ -17,6 +17,7 @@ const SupportTicketController = require('../controllers/api/SupportTicketControl
 const CategoryController = require('../controllers/api/CategoryController');
 const SubCategoryController = require('../controllers/api/SubcategoryController');
 const QuestionController = require('../controllers/api/QuestionController');
+const NotificationController = require('../controllers/api/NotificationController');
 //----------------------------------------------
 
 
@@ -107,9 +108,14 @@ router.post('/category/create', CategoryController.create);
 router.post('/sub-category/list', SubCategoryController.list);
 router.post('/sub-category/create', SubCategoryController.create);
 
-
+// Question
 router.post('/question/list', QuestionController.list);
 // router.post('/sub-category/create', SubCategoryController.create);
+
+// Notification
+router.post('/notification/list', authUser, NotificationController.list);
+router.post('/notification/create', authUser, NotificationController.create);
+// router.post('/notification/mark-read', NotificationController.markRead);
 
 //----------------------------------------------
 

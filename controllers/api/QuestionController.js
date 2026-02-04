@@ -20,7 +20,6 @@ exports.list = async (req, res) => {
 		// check validation
 		// if (!isExist) return ret.sendFail('SubCategory does not exist');
 
-		console.log("reqData?.slug:", reqData?.slug);
 		let list = Constant.questions[reqData?.slug];
 		if (!list) {
 			return ret.sendFail('questions does not exist for this category/subctegory');

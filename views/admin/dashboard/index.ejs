@@ -1,33 +1,75 @@
 <!-- Style ------------------------------------------------------------>
 <%- contentFor('style'); %>
 
-<!-- Content ------------------------------------------------------------>
-<%- contentFor('content'); %>
+    <!-- Content ------------------------------------------------------------>
+    <%- contentFor('content'); %>
 
-<div class="content-wrapper">
-    <!-- Page Header -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Dashboard</h1>
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Dashboard</h1>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+            <!-- / Page Header -->
+
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- <div class="row"> -->
+                    <!-- <div class="column"> -->
+                    <div class="card card-widget widget-user w-50 m-auto">
+                        <div class="widget-user-header" style="background-color:#FFBD69;">
+                            <h3 class="widget-user-username text-dark font-weight-bold">
+                                <%= admin?.name %>
+                            </h3>
+                            <h5 class="widget-user-desc text-dark">
+                                <%= admin?.email %>
+                            </h5>
+                        </div>
+
+                        <!-- <div class="widget-user-image">
+    <img class="img-circle elevation-2" src="/img/user1.jpg" alt="User Avatar">
+  </div> -->
+
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-sm-4 border-right">
+                                    <div class="description-block">
+                                        <h2 class="description-header text-lg">
+                                            <%= admin?.tickets ?? 0 %>
+                                        </h2>
+                                        <span class="description-text text-capitalize">Tickets Accepted</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 border-right">
+                                    <div class="description-block">
+                                        <h2 class="description-header text-lg">
+                                            <%= admin?.avgAcceptTime ? `${admin?.avgAcceptTime}` : '-' %>
+                                        </h2>
+                                        <span class="description-text text-capitalize ">Avg. Acceptance Time</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="description-block">
+                                        <h2 class="description-header text-lg">
+                                            <%= admin?.avgResTime ? `${admin?.avgResTime}`: '-' %>
+                                        </h2>
+                                        <span class="description-text text-capitalize">Avg. Response Time</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- </div> -->
+                <!-- </div> -->
+            </section>
         </div>
-    </section>
-    <!-- / Page Header -->
-
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-
-
-                <!-- Col 2 -->
-                
-                <!-- / Col 2 -->
-            </div>
-        </div>
-    </section>
-</div>
-<!-- Script ------------------------------------------------------------>
-<%- contentFor('script'); %>
+        <!-- Script ------------------------------------------------------------>
+        <%- contentFor('script'); %>

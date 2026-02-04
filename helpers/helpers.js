@@ -334,6 +334,32 @@ exports.timeSince = (date) => {
 
     return Math.floor(seconds) + ' secs ago';
 };
+
+exports.convertIimeInverval = (interval, unit) => {
+    switch (unit) {
+        case 'm':
+            return interval * 60;
+        case 'h':
+            return interval * 60 * 60;
+        case 'd':
+            return interval * 60 * 60 * 24;
+        case 'w':
+            return interval * 60 * 60 * 24 * 7;
+        case 'y':
+            return interval * 60 * 60 * 24 * 365;
+        default:
+            return interval;
+    }
+}
+
+exports.formatDuration = (ms) => {
+    if (!ms) return '';
+    if (ms < 1000) return `${ms} ms`;
+    if (ms < 60000) return `${(ms / 1000).toFixed(2)} s`;
+    if (ms < 3600000) return `${(ms / 60000).toFixed(2)} min`;
+    if (ms < 86400000) return `${(ms / 3600000).toFixed(2)} h`;
+    return `${(ms / 86400000).toFixed(2)} d`;
+}
 // } Date Time - helpers --------------------------------
 
 

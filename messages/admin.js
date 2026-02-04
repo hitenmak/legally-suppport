@@ -74,6 +74,12 @@ module.exports = {
 
     supportTicket: {
         create: 'Ticket created successfully',
+         accept: {
+            success: 'Support ticket accepted',
+            fail: 'failed to accept the ticket',
+            alreadyAccepted: 'Support ticket already accepted',
+            alreadyAcceptedByOther: 'Support ticket already accepted by another admin',
+        }
     },
     // Values ---------------------------------------------------------------------------------------------
 

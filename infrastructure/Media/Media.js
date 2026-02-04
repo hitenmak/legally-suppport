@@ -90,6 +90,12 @@ exports.storeSupportAttachment = (fieldName) => {
     return MulterMethods.multiple(fieldName, supportAttachmentFolderName);
 };
 
+// exports.storeSupportAttachment = (fieldName) => {
+//     return MulterMethods.many(fieldName, supportAttachmentFolderName, 'attachments');
+//     // return MulterMethods.any(supportAttachmentFolderName);
+// };
+
+
 exports.deleteSupportAttachment = (imageNames) => {
     return MulterMethods.unlinkMediaMultiple(imageNames, supportAttachmentFolderName);
 };

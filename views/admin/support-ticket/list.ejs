@@ -1,97 +1,106 @@
-<% ConfigLabels = {'title': {'s': 'Support Ticket', 'p': 'Support Tickets'},}; %>
+<% ConfigLabels={'title': {'s': 'Support Ticket' , 'p' : 'Support Tickets' },}; %>
 
-<!-- Style ------------------------------------------------------------>
-<%- contentFor('style') %>
+    <!-- Style ------------------------------------------------------------>
+    <%- contentFor('style') %>
 
 
-<!-- Content ------------------------------------------------------------>
-<%- contentFor('content') %>
+        <!-- Content ------------------------------------------------------------>
+        <%- contentFor('content') %>
 
-<div class="content-wrapper">
+            <div class="content-wrapper">
 
-    <!-- Page Header -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-4">
-                    <h1>
-                        <%= ConfigLabels.title.p; %>
+                <!-- Page Header -->
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <h1>
+                                    <%= ConfigLabels.title.p; %>
 
-                        <span class=" badge badge-secondary ml-2 _pagerTotalRecords d-none"></span>
-                    </h1>
-                </div>
-                <div class="col-sm-8">
-                    <div class="row justify-content-end">
-                        
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label>Request Type</label>
-                                <select class="custom-select form-control-sm" id="requestType" style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                    <option value="" selected>- All -</option>
-                                    <% if(requestType) { %>
-                                    <% for (const key in requestType) { %>
-                                        <option value="<%=key%>"><%=requestType[key]%></option>
-                                    <% } %>
-                                    <%}%>
-
-                                </select>
+                                        <span class=" badge badge-secondary ml-2 _pagerTotalRecords d-none"></span>
+                                </h1>
                             </div>
-                        </div>
+                            <div class="col-sm-8">
+                                <div class="row justify-content-end">
 
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label>Stared</label>
-                                <select class="custom-select form-control-sm" id="isForDeveloper" style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                    <option value="" selected>- All -</option>
-                                    <option value="1">Stared</option>
-                                    <option value="0">Not Stared</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label>Open</label>
-                                <select class="custom-select form-control-sm" id="isOpen" style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                    <option value="" selected>- All -</option>
-                                    <option value="1">Open</option>
-                                    <option value="0">Closed</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label>Replied</label>
-                                <select class="custom-select form-control-sm" id="isRepliedByAdmin" style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                    <option value="" selected>- All -</option>
-                                    <option value="1">Replied</option>
-                                    <option value="0">Not Replied</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label>Read</label>
-                                <select class="custom-select form-control-sm" id="isRead" style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                    <option value="">- All -</option>
-                                    <option value="1">Read</option>
-                                    <option value="0">Unread</option>
-                                </select>
-                            </div>
-                        </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Request Type</label>
+                                            <select class="custom-select form-control-sm" id="requestType"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="" selected>- All -</option>
+                                                <% if(requestType) { %>
+                                                    <% for (const key in requestType) { %>
+                                                        <option value="<%=key%>">
+                                                            <%=requestType[key]%>
+                                                        </option>
+                                                        <% } %>
+                                                            <%}%>
 
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label>Delete</label>
-                                <select class="custom-select form-control-sm" id="isDeleted" style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                    <option value="">- All -</option>
-                                    <option value="1">Yes</option>
-                                    <option value="0">No</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-sm bg-gradient-danger deleteMultiple float-right">Delete Multiple</button>
-                        </div>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                        <!--<div class="col-sm-2">
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Stared</label>
+                                            <select class="custom-select form-control-sm" id="isForDeveloper"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="" selected>- All -</option>
+                                                <option value="1">Stared</option>
+                                                <option value="0">Not Stared</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Open</label>
+                                            <select class="custom-select form-control-sm" id="isOpen"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="" selected>- All -</option>
+                                                <option value="1">Open</option>
+                                                <option value="0">Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Replied</label>
+                                            <select class="custom-select form-control-sm" id="isRepliedByAdmin"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="" selected>- All -</option>
+                                                <option value="1">Replied</option>
+                                                <option value="0">Not Replied</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Read</label>
+                                            <select class="custom-select form-control-sm" id="isRead"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="">- All -</option>
+                                                <option value="1">Read</option>
+                                                <option value="0">Unread</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Delete</label>
+                                            <select class="custom-select form-control-sm" id="isDeleted"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="">- All -</option>
+                                                <option value="1">Yes</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-sm bg-gradient-danger deleteMultiple float-right">Delete
+                                            Multiple</button>
+                                    </div>
+
+                                    <!--<div class="col-sm-2">
                             <div class="form-group">
                                 <label>From</label>
                                 <input type="date" class="form-control form-control-sm fromDate" id="fromDate">
@@ -103,171 +112,173 @@
                                 <input type="date" class="form-control form-control-sm toDate" id="toDate">
                             </div>
                         </div>-->
+                                </div>
 
+                            </div>
+
+                        </div>
                     </div>
+                </section>
+                <!-- / Page Header -->
 
-                </div>
+                <!-- Main content -->
+                <ANY id="tw">
 
+                </ANY>
+
+                <!-- /.content -->
             </div>
-        </div>
-    </section>
-    <!-- / Page Header -->
-
-    <!-- Main content -->
-    <ANY id="tw">
-
-    </ANY>
-
-    <!-- /.content -->
-</div>
 
 
-<!-- Script ------------------------------------------------------------>
-<%- contentFor('script') %>
+            <!-- Script ------------------------------------------------------------>
+            <%- contentFor('script') %>
 
-<script>
-    tableLayout = {
-        ticketStatus : { label: "", displayType: "actionIsDeletedDisableCheckbox", isSearchable: 0, isSortable: 0 },
-        ticketId : { label: 'Ticket Id', displayType: 'badge', isSearchable: 1, isSortable: 1 },
-      //  profileImage: {label: 'Profile', displayType: 'image', isSearchable: 0, isSortable: 0},
-        userReference: {label: 'Name', displayType: 'linkText', isSearchable: 0, isSortable: 0},
-        username: {label: 'Username', displayType: 'text', isSearchable: 0, isSortable: 0},
-        requestType: {label: 'Request Type', displayType: 'badge', isSearchable: 1, isSortable: 1},
-        createdAt: {label: 'Created At', displayType: 'badge', isSearchable: 0, isSortable: 1},
-        isForDeveloper: {label: 'Stared', displayType: 'star', isSearchable: 0, isSortable: 1},
-        isRead: {label: 'Read', displayType: 'readUnread', isSearchable: 0, isSortable: 1},
-        isRepliedByAdmin: {label: 'Replied', displayType: 'text', isSearchable: 0, isSortable: 1},
-        isOpen: {label: 'Status', displayType: 'status', isSearchable: 0, isSortable: 1},
+                <script>
+                    tableLayout = {
+                        ticketStatus: { label: "", displayType: "actionIsDeletedDisableCheckbox", isSearchable: 0, isSortable: 0 },
+                        ticketId: { label: 'Ticket Id', displayType: 'badge', isSearchable: 1, isSortable: 1 },
+                        //  profileImage: {label: 'Profile', displayType: 'image', isSearchable: 0, isSortable: 0},
+                        userReference: { label: 'Name', displayType: 'linkText', isSearchable: 0, isSortable: 0 },
+                        username: { label: 'Username', displayType: 'text', isSearchable: 0, isSortable: 0 },
+                        // requestType: { label: 'Request Type', displayType: 'badge', isSearchable: 1, isSortable: 1 },
+                        createdAt: { label: 'Created At', displayType: 'badge', isSearchable: 0, isSortable: 1 },
+                        isForDeveloper: { label: 'Stared', displayType: 'star', isSearchable: 0, isSortable: 1 },
+                        // isRead: { label: 'Read', displayType: 'readUnread', isSearchable: 0, isSortable: 1 },
+                        isRepliedByAdmin: { label: 'Replied', displayType: 'text', isSearchable: 0, isSortable: 1 },
+                        isOpen: { label: 'Status', displayType: 'status', isSearchable: 0, isSortable: 1 },
+                        categoryId: { label: 'Category', displayType: 'text', isSearchable: 0, isSortable: 1 },
+                        subCategoryId: { label: 'Sub Category', displayType: 'text', isSearchable: 0, isSortable: 1 },
+                        acceptedBy: { label: 'Accepted By', displayType: 'text', isSearchable: 0, isSortable: 1 },
+                        lastRepliedBy: { label: 'Last Replied (Admin)', displayType: 'text', isSearchable: 0, isSortable: 1 },
+                    };
+                    // requiredField = {}
 
-    };
-    // requiredField = {}
+                    recordUrls = {
+                        listing: 'support-ticket/list'
+                    };
 
-    recordUrls = {
-        listing: 'support-ticket/list'
-    };
+                    // pageConfig = {
+                    //     showRowAction: true,
+                    // };
 
-    // pageConfig = {
-    //     showRowAction: true,
-    // };
+                    const addPageNumber = () => {
+                        $('._tbody a.btn').each(i => {
+                            const el = $($('._tbody a.btn')[i]);
+                            let url = el.attr('href') || '';
+                            if (url.includes('support-ticket/details/'))
+                                el.attr('href', `${url}?page=${pager.pageNumber}`);
+                        })
+                    }
 
-    const addPageNumber = () => {
-        $('._tbody a.btn').each(i => {
-            const el = $($('._tbody a.btn')[i]);
-            let url = el.attr('href') || '';
-            if(url.includes('support-ticket/details/'))
-                el.attr('href', `${url}?page=${pager.pageNumber}`);
-        })
-    }
+                    $(document).on('click', '._tbody a.btn', function (e) {
+                        const el = $(this);
+                        let url = el.attr('href') || '';
+                        if (url.includes('support-ticket/details/') || url.includes('support-ticket/delete/')) {
+                            e.preventDefault();
+                            localStorage.setItem('currentPageSupportTickets', pager.pageNumber);
+                            window.location.href = url; //`${url}?page=${pager.pageNumber}`;
+                        }
 
-    $(document).on('click', '._tbody a.btn', function(e) {
-        const el = $(this);
-        let url = el.attr('href') || '';
-        if(url.includes('support-ticket/details/') || url.includes('support-ticket/delete/')){
-            e.preventDefault();
-            localStorage.setItem('currentPageSupportTickets', pager.pageNumber);
-            window.location.href = url; //`${url}?page=${pager.pageNumber}`;
-        }
+                        // el.attr('href', `${url}?page=${pager.pageNumber}`);
+                    });
 
-            // el.attr('href', `${url}?page=${pager.pageNumber}`);
-    });
-
-    const updateFilter = (isOldGet = false) => {
+                    const updateFilter = (isOldGet = false) => {
 
 
 
 
-        let currentFilters = localStorage.getItem('currentFiltersSupportTickets');
-        if(currentFilters) currentFilters = JSON.parse(currentFilters) || {}
-        else currentFilters = {};
-        if(isOldGet) {
+                        let currentFilters = localStorage.getItem('currentFiltersSupportTickets');
+                        if (currentFilters) currentFilters = JSON.parse(currentFilters) || {}
+                        else currentFilters = {};
+                        if (isOldGet) {
 
-            currentFilters.requestType = currentFilters.requestType || $('#requestType').find(":selected").val();
-            currentFilters.isForDeveloper = currentFilters.isForDeveloper || $('#isForDeveloper').find(":selected").val();
-            currentFilters.isRepliedByAdmin = currentFilters.isRepliedByAdmin || $('#isRepliedByAdmin').find(":selected").val();
-            currentFilters.isOpen = currentFilters.isOpen || $('#isOpen').find(":selected").val();
-            currentFilters.isRead = currentFilters.isRead || $('#isRead').find(":selected").val();
-            currentFilters.isDeleted = currentFilters.isDeleted || $('#isDeleted').find(":selected").val();
+                            currentFilters.requestType = currentFilters.requestType || $('#requestType').find(":selected").val();
+                            currentFilters.isForDeveloper = currentFilters.isForDeveloper || $('#isForDeveloper').find(":selected").val();
+                            currentFilters.isRepliedByAdmin = currentFilters.isRepliedByAdmin || $('#isRepliedByAdmin').find(":selected").val();
+                            currentFilters.isOpen = currentFilters.isOpen || $('#isOpen').find(":selected").val();
+                            currentFilters.isRead = currentFilters.isRead || $('#isRead').find(":selected").val();
+                            currentFilters.isDeleted = currentFilters.isDeleted || $('#isDeleted').find(":selected").val();
 
-            $(`#requestType option[value="${currentFilters.requestType}"]`).attr('selected','selected');
-            $(`#isForDeveloper option[value="${currentFilters.isForDeveloper}"]`).attr('selected','selected');
-            $(`#isRepliedByAdmin option[value="${currentFilters.isRepliedByAdmin}"]`).attr('selected','selected');
-            $(`#isOpen option[value="${currentFilters.isOpen}"]`).attr('selected','selected');
-            $(`#isRead option[value="${currentFilters.isRead}"]`).attr('selected','selected');
-            $(`#isDeleted option[value="${currentFilters.isDeleted}"]`).attr('selected','selected');
+                            $(`#requestType option[value="${currentFilters.requestType}"]`).attr('selected', 'selected');
+                            $(`#isForDeveloper option[value="${currentFilters.isForDeveloper}"]`).attr('selected', 'selected');
+                            $(`#isRepliedByAdmin option[value="${currentFilters.isRepliedByAdmin}"]`).attr('selected', 'selected');
+                            $(`#isOpen option[value="${currentFilters.isOpen}"]`).attr('selected', 'selected');
+                            $(`#isRead option[value="${currentFilters.isRead}"]`).attr('selected', 'selected');
+                            $(`#isDeleted option[value="${currentFilters.isDeleted}"]`).attr('selected', 'selected');
 
-        } else {
+                        } else {
 
-            currentFilters.requestType = $('#requestType').find(":selected").val();
-            currentFilters.isForDeveloper = $('#isForDeveloper').find(":selected").val();
-            currentFilters.isRepliedByAdmin = $('#isRepliedByAdmin').find(":selected").val();
-            currentFilters.isOpen = $('#isOpen').find(":selected").val();
-            currentFilters.isRead = $('#isRead').find(":selected").val();
-            currentFilters.isDeleted = $('#isDeleted').find(":selected").val();
-        }
-
-
-        localStorage.setItem('currentFiltersSupportTickets', JSON.stringify(currentFilters));
-
-        setFilters(currentFilters.requestType, 'requestType');
-        setFilters(currentFilters.isForDeveloper, 'isForDeveloper');
-        setFilters(currentFilters.isRepliedByAdmin, 'isRepliedByAdmin');
-        setFilters(currentFilters.isOpen, 'isOpen');
-        setFilters(currentFilters.isRead, 'isRead');
-        setFilters(currentFilters.isDeleted, 'isDeleted');
-
-        let currentPage = localStorage.getItem('currentPageSupportTickets');
-        if(currentPage)
-            localStorage.setItem('currentPageSupportTickets', 1);
-
-        getPage(currentPage ? currentPage : 1);
-
-    }
+                            currentFilters.requestType = $('#requestType').find(":selected").val();
+                            currentFilters.isForDeveloper = $('#isForDeveloper').find(":selected").val();
+                            currentFilters.isRepliedByAdmin = $('#isRepliedByAdmin').find(":selected").val();
+                            currentFilters.isOpen = $('#isOpen').find(":selected").val();
+                            currentFilters.isRead = $('#isRead').find(":selected").val();
+                            currentFilters.isDeleted = $('#isDeleted').find(":selected").val();
+                        }
 
 
-    init(() => {
-        initTable(true, false);
-        updateFilter(true);
-    });
+                        localStorage.setItem('currentFiltersSupportTickets', JSON.stringify(currentFilters));
 
-    $(document).on('click', '.goToPage', function () {
-        let currentFilters = localStorage.getItem('currentFiltersSupportTickets');
-        if(currentFilters) currentFilters = JSON.parse(currentFilters) || {};
+                        setFilters(currentFilters.requestType, 'requestType');
+                        setFilters(currentFilters.isForDeveloper, 'isForDeveloper');
+                        setFilters(currentFilters.isRepliedByAdmin, 'isRepliedByAdmin');
+                        setFilters(currentFilters.isOpen, 'isOpen');
+                        setFilters(currentFilters.isRead, 'isRead');
+                        setFilters(currentFilters.isDeleted, 'isDeleted');
 
-        getPage($(this).attr('data-pg-no'));
-    });
-    $('#requestType, #isForDeveloper, #isRepliedByAdmin, #isOpen, #isRead, #isDeleted').change(function () {
-        updateFilter();
-        // let currentVal = $(this).find(":selected").val();
-        // applyFilters(currentVal, 'requestType');
-    });
+                        let currentPage = localStorage.getItem('currentPageSupportTickets');
+                        if (currentPage)
+                            localStorage.setItem('currentPageSupportTickets', 1);
 
-    
-    const deleteIds = [];
-    $(document).on('click', '.deleteMultiple', function () {
-        const el = $(this);
-        let url = el.attr('href') || '';
+                        getPage(currentPage ? currentPage : 1);
 
-        let selectedCheckboxEl = $('._deleteSelected:checked');
-        if(!selectedCheckboxEl.length) return;
+                    }
 
-        selectedCheckboxEl.each(i=>{
-            deleteIds.push($(selectedCheckboxEl[i]).val());
-        });
 
-        if(empty(deleteIds)) return;
-        
-        $.ajax({
-            url: getUrl('support-ticket/delete-multiple'),
-            type: 'POST',
-            data: {
-                deleteIds
-            },
-            success: (res) => {
-                toastMake(res);
-                if(res.isSuccess)
-                    location.reload();
-            }
-        });
-    });
+                    init(() => {
+                        initTable(true, false);
+                        updateFilter(true);
+                    });
 
-</script>
+                    $(document).on('click', '.goToPage', function () {
+                        let currentFilters = localStorage.getItem('currentFiltersSupportTickets');
+                        if (currentFilters) currentFilters = JSON.parse(currentFilters) || {};
+
+                        getPage($(this).attr('data-pg-no'));
+                    });
+                    $('#requestType, #isForDeveloper, #isRepliedByAdmin, #isOpen, #isRead, #isDeleted').change(function () {
+                        updateFilter();
+                        // let currentVal = $(this).find(":selected").val();
+                        // applyFilters(currentVal, 'requestType');
+                    });
+
+
+                    const deleteIds = [];
+                    $(document).on('click', '.deleteMultiple', function () {
+                        const el = $(this);
+                        let url = el.attr('href') || '';
+
+                        let selectedCheckboxEl = $('._deleteSelected:checked');
+                        if (!selectedCheckboxEl.length) return;
+
+                        selectedCheckboxEl.each(i => {
+                            deleteIds.push($(selectedCheckboxEl[i]).val());
+                        });
+
+                        if (empty(deleteIds)) return;
+
+                        $.ajax({
+                            url: getUrl('support-ticket/delete-multiple'),
+                            type: 'POST',
+                            data: {
+                                deleteIds
+                            },
+                            success: (res) => {
+                                toastMake(res);
+                                if (res.isSuccess)
+                                    location.reload();
+                            }
+                        });
+                    });
+
+                </script>

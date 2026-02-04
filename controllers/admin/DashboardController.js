@@ -5,9 +5,11 @@ const User = require('../../models/User');
 const SupportTicket = require('../../models/SupportTicket');
 
 // Helpers
-const { d, dd, empty, formatNumber, getDateFormat, timeSince, getFixedDecimal} = require('../../helpers/helpers');
+const { d, dd, empty, formatNumber, getDateFormat, timeSince, getFixedDecimal, formatDuration } = require('../../helpers/helpers');
 const { getFullUrlAction } = require('../../helpers/ejsHelpers');
 const Constant = require('../../config/Constant');
+const Notification = require('../../models/Notification');
+const Admin = require('../../models/Admin');
 
 
 //---------------------------------------------------------------------------------------------
@@ -17,6 +19,146 @@ const Constant = require('../../config/Constant');
 exports.index = async (req, res) => {
     const ret = res.ret;
 
+    const adminId = req?.user?._id;
+    if (!adminId) return res.ret.redirect('login');
+    // const admin = await Admin.findOne({ _id: adminId });
+    let admin = {};
+    const adminRes = await Admin.aggregate([
+        {
+            $match: {
+                _id: adminId
+            }
+        },
+        {
+            $lookup: {
+                from: "supporttickets",
+                localField: "_id",
+                foreignField: "acceptedBy",
+                as: "tickets"
+            }
+        },
+        {
+            $addFields: {
+                count: { $size: "$tickets" },
+                avgAcceptTime: {
+                    $avg: {
+                        $map: {
+                            input: {
+                                $filter: {
+                                    input: "$tickets",
+                                    as: "t",
+                                    cond: {
+                                        $ne: ["$$t.acceptedAt", null]
+                                    }
+                                }
+                            },
+                            as: "t",
+                            in: {
+                                $abs: {
+                                    $dateDiff: {
+                                        startDate: "$$t.createdAt",
+                                        endDate: "$$t.acceptedAt",
+                                        unit: "millisecond"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $unwind: "$tickets"
+        },
+        {
+            $match: {
+                $or: [
+                    { tickets: null },
+                    { "tickets.isDeleted": false }
+                ]
+            }
+        },
+        {
+            $project: {
+                name: 1,
+                email: 1,
+                count: 1,
+                avgAcceptTime: 1,
+
+                userReplyTime: {
+                    $min: {
+                        $map: {
+                            input: {
+                                $filter: {
+                                    input: "$tickets.reply",
+                                    as: "r",
+                                    cond: {
+                                        $eq: ["$$r.adminId", null]
+                                    }
+                                }
+                            },
+                            as: "ur",
+                            in: "$$ur.createdAt"
+                        }
+                    }
+                },
+                adminReplyTime: {
+                    $min: {
+                        $map: {
+                            input: {
+                                $filter: {
+                                    input: "$tickets.reply",
+                                    as: "r",
+                                    cond: {
+                                        $eq: [
+                                            "$$r.adminId",
+                                            adminId
+                                        ]
+                                    }
+                                }
+                            },
+                            as: "ar",
+                            in: "$$ar.createdAt"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $addFields: {
+                replyTimeMs: {
+                    $cond: {
+                        if: {
+                            $and: [
+                                { $ne: ["$userReplyTime", null] },
+                                { $ne: ["$adminReplyTime", null] }
+                            ]
+                        },
+                        then: { $subtract: ["$adminReplyTime", "$userReplyTime"] },
+                        else: null
+                    }
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$_id",
+                name: { $first: "$name" },
+                email: { $first: "$email" },
+                count: { $first: "$count" },
+                isActive: { $first: "$isActive" },
+                avgAcceptTime: { $first: "$avgAcceptTime" },
+                avgResTime: { $avg: "$replyTimeMs" }
+            }
+        }
+    ]);
+    if (adminRes && adminRes.length > 0) {
+        admin = adminRes[0];
+
+        admin.tickets = admin?.count || 0;
+        admin.avgAcceptTime = formatDuration(admin?.avgAcceptTime);
+        admin.avgResTime = formatDuration(admin?.avgResTime);
+    }
 
     //-----------------------------
 
@@ -52,7 +194,7 @@ exports.index = async (req, res) => {
 { $gte: lastMonthStart, $lte: lastMonthEnd }
     ])
 
-    ret.render('dashboard/index', {});
+    ret.render('dashboard/index', { admin });
 };
 
 

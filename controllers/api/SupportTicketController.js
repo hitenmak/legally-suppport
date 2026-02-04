@@ -2,18 +2,18 @@
 const SupportTicket = require('../../models/SupportTicket');
 const User = require('../../models/User');
 
-const { d, dd, empty, checkValidation, getStr, getVal, objMaker, formatReqFiles, filterUsername } = require('../../helpers/helpers');
-const { makeHashPassword, matchHashPassword, generateJwtToken } = require('../../helpers/auth');
+const { empty, checkValidation, getStr, getVal, objMaker, formatReqFiles, filterUsername, dd } = require('../../helpers/helpers');
+const { makeHashPassword } = require('../../helpers/auth');
 const MakeData = require('../../helpers/makeData');
 const Msg = require('../../messages/api');
 
 const Media = require('../../infrastructure/Media/Media');
-const SubDocument = require('../../infrastructure/SubDocument');
 
 const Constant = require('../../config/Constant');
 const { supportTicketCreate, supportTicketReply } = require('../../infrastructure/Mail/Mail');
 const path = require('path');
 const Admin = require('../../models/Admin');
+const Notification = require('../../models/Notification');
 
 
 //---------------------------------------------------------------------------------------------
@@ -54,12 +54,14 @@ exports.create = async (req, res) => {
             const attachments = [];
 
             if (latestReply?.attachments?.length) {
-                for (const attachment of latestReply.attachments) {
-                    attachments.push({
-                        filename: attachment?.src || '',
-                        path: attachment.src ? path.join(outputDir, 'support-attachment', attachment.src) : '',
-                        contentType: 'application/pdf',
-                    });
+                for (const attachment of Object.values(latestReply?.attachments)) {
+                    for (const a of attachment) {
+                        attachments.push({
+                            filename: a?.src || '',
+                            path: a.src ? path.join(outputDir, 'support-attachment', attachment.src) : '',
+                            contentType: 'application/pdf',
+                        });
+                    }
                 }
             }
 
@@ -73,17 +75,39 @@ exports.create = async (req, res) => {
 
 // Create
 exports.createticket = async (req, res) => {
-    Media.storeSupportAttachment('attachments')(req, res, async (err) => {
-        // dd(req.files);
+    Media.storeSupportAttachment('attachments')(req, res, async () => {
+        // ,Screenshot of payment (optional but recommended),Upload photo/video evidence,Screenshot (if applicable),Screenshot of error message,Upload photo evidence (mandatory),Screenshot of tracking screen,Photo evidence (if any),Screenshot or screen recording,Upload evidence (if fraud)
+        dd(req.files);
         req = formatReqFiles(req);
         const ret = res.ret;
         const reqData = req.body;
         // Check validation
         const isInvalid = checkValidation(reqData, {
-            requestType: `required|in:${Constant.ticketRequestTypeKeys.join(',')}`,
+            // requestType: `required|in:${Constant.ticketRequestTypeKeys.join(',')}`,
             message: 'required',
+            categoryId: 'required|objectId',
+            subCategoryId: 'required|objectId',
+            slug: `required|in: ${Constant?.questionKeys}`,
         });
         if (isInvalid) return ret.sendFail(isInvalid);
+        /*
+                const questionForFile = Constant.questions[reqData?.slug].filter((q) => {
+                    return q?.type === 'FILE';
+                });
+                reqData.questions = JSON.parse(reqData?.questions) || [];
+                if (questionForFile?.length) {
+        
+                    questionForFile?.reduce((acc, q) => { acc.push({ question: q?.label, type: "FILE", answer: req?.files[q?.label]?.map((f) => f?.filename) }); return acc; }, reqData?.questions);
+                }
+        
+                const isInvalidQuestions = checkValidation(reqData?.questions, {
+                    question: 'required|string',
+                    type: `required|string|in:${Constant?.questionTypes}`,
+                    // answer: 'required',
+                });
+        
+                if (isInvalid) return ret.sendFail(isInvalidQuestions);
+                */
         const record = new SupportTicket;
         const isExistEmail = await User.findOne({ email: filterUsername(reqData.email) }).exec();
 
@@ -103,17 +127,20 @@ exports.createticket = async (req, res) => {
 
             updatedRecord.save();
             updatedRecord = updatedRecord?.toObject();
-            console.log(updatedRecord);
             record.userId = updatedRecord._id;
         } else {
+            // record.categoryId = getStr(reqData?.categoryId),
+            // record.subCategoryId = getStr(reqData?.subCategoryId),
+            // record.questions = (reqData?.questions),
             record.userId = isExistEmail._id;
         }
 
-
-
-
-        record.requestType = getStr(reqData.requestType);
+        // record.requestType = getStr(reqData.requestType);
         const result = await SupportTicket.findOne({}, {}, { sort: { _id: -1 } }).exec();
+        record.categoryId = getStr(reqData?.categoryId),
+            record.subCategoryId = getStr(reqData?.subCategoryId),
+            // record.questions = (reqData?.questions),
+            record.userId = isExistEmail._id;
         record.ticketId = result ? (parseInt(result.ticketId) + 1).toString().padStart(8, '0') : (1).toString().padStart(8, '0');
         record.reply.push({
             message: getStr(reqData.message),
@@ -131,7 +158,23 @@ exports.createticket = async (req, res) => {
             const outputDir = path.resolve(Constant.ROOT_DIR, `../${Constant.STORAGE.LOCAL_FOLDER}`);
 
             const attachments = [];
-
+            /*  
+              const questionList = questionForFile.map((question) => question?.label);
+              if (questionForFile?.length) {
+                  record?.questions?.forEach((q) => {
+                      if (questionList.includes(q?.question)) {
+                          for (const answer of (q?.answer || [])) {
+  
+                              attachments.push({
+                                  filename: answer,
+                                  path: answer ? path.join(outputDir, 'support-attachment', answer) : '',
+                                  contentType: "application/pdf"
+                              })
+                          }
+                      }
+                  })
+              }
+  */
             if (latestReply?.attachments?.length) {
                 for (const attachment of latestReply.attachments) {
                     attachments.push({
@@ -142,8 +185,20 @@ exports.createticket = async (req, res) => {
                 }
             }
 
-            const admin = await Admin.find({ isMaster: true });
-            await supportTicketCreate({ toEmail: admin.email, attachments, ticketId: record?.ticketId, requestType: record?.requestType, userName: reqData.email, email: reqData.email, message: latestReply?.message })
+            const admins = await Admin.find({ isMaster: true });
+            admins.forEach((admin) => {
+                Notification.create({
+                    "receiverId": admin?._id,
+                    "receiverType": "Admin",
+                    "actionUserId": updatedRecord?.userId,
+                    "actionUserType": "User",
+                    "moduleId": record?._id,
+                    "moduleType": "SupportTicket",
+                    "message": "Support Ticket Created",
+                })
+            })
+            const adminMails = admins.map(a => a?.email);
+            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, requestType: record?.requestType, userName: reqData.email, email: reqData.email, message: latestReply?.message })
             ret.sendSuccess(resData, Msg.supportTicket.create);
         }).catch(e => ret.err500(e));
     });
