@@ -17937,3 +17937,252 @@ exports.withdrawSettings = () => {
     }
   ];
 };
+
+// Category -------------------------------------------------------------------------------------------------
+exports.categories = () => {
+  return [
+    {
+      "_id": "6973764eef2d4238b87dd977",
+      "name": "MARKETPLACE",
+      "label": "Marketplace",
+      //"createdAt": "2026-01-23T13:23:26.205Z",
+      // "updatedAt": "2026-01-23T13:23:26.205Z",
+      "__v": 0
+    },
+    {
+      "_id": "6978448fe6920793f6305763",
+      "name": "LOGISTICS-AND-DELIVERY",
+      "label": "Logistics & Delivery",
+      //"createdAt": "2026-01-27T04:52:31.607Z",
+      // "updatedAt": "2026-01-27T04:52:31.607Z",
+      "__v": 0
+    },
+    {
+      "_id": "697845120dde36a44489b741",
+      "name": "SERVICES-AND-RENTALS",
+      "label": "Services & Rentals",
+      //"createdAt": "2026-01-27T04:54:42.518Z",
+      // "updatedAt": "2026-01-27T04:54:42.518Z",
+      "__v": 0
+    },
+    {
+      "_id": "6978451e0dde36a44489b744",
+      "name": "SUE-LEGAL-SERVICES",
+      "label": "SUE (Legal Services)",
+      //"createdAt": "2026-01-27T04:54:54.194Z",
+      // "updatedAt": "2026-01-27T04:54:54.194Z",
+      "__v": 0
+    },
+    {
+      "_id": "6978452f0dde36a44489b747",
+      "name": "ACCOUNT-OR-APP-ISSUES",
+      "label": "Account / App Issues",
+      //"createdAt": "2026-01-27T04:55:11.594Z",
+      // "updatedAt": "2026-01-27T04:55:11.594Z",
+      "__v": 0
+    },
+    {
+      "_id": "6978453e0dde36a44489b74a",
+      "name": "FEEDBACK-AND-COMPLAINTS-AND-REPORT-ABUSE",
+      "label": "Feedback, Complaints & Report Abuse",
+      //"createdAt": "2026-01-27T04:55:26.707Z",
+      // "updatedAt": "2026-01-27T04:55:26.707Z",
+      "__v": 0
+    }
+  ];
+}
+
+// SubCategory -------------------------------------------------------------------------------------------------
+exports.subCategories = () => {
+  return [
+    {
+      "_id": "697845c6c49e6cec82bc18ab",
+      "name": "ORDERS-AND-PAYMENTS",
+      "label": "Orders & Payments",
+      "categoryId": "6973764eef2d4238b87dd977",
+      //"createdAt": "2026-01-27T04:57:42.147Z",
+      // "updatedAt": "2026-01-27T04:57:42.147Z",
+      "__v": 0
+    },
+    {
+      "_id": "6978472bc49e6cec82bc18b1",
+      "name": "PRODUCT-OR-LISTING-ISSUES",
+      "label": "Product / Listing Issues",
+      "categoryId": "6973764eef2d4238b87dd977",
+      //"createdAt": "2026-01-27T05:03:39.352Z",
+      // "updatedAt": "2026-01-27T05:03:39.352Z",
+      "__v": 0
+    },
+    {
+      "_id": "69784791c49e6cec82bc18b5",
+      "name": "SELLER-ISSUES-BUYER-SIDE",
+      "label": "Seller Issues (Buyer side)",
+      "categoryId": "6973764eef2d4238b87dd977",
+      //"createdAt": "2026-01-27T05:05:21.262Z",
+      // "updatedAt": "2026-01-27T05:05:21.262Z",
+      "__v": 0
+    },
+    {
+      "_id": "697847d1c49e6cec82bc18b9",
+      "name": "RETURNS-AND-REFUNDS-AND-DISPUTES",
+      "label": "Returns, Refunds & Disputes",
+      "categoryId": "6973764eef2d4238b87dd977",
+      //"createdAt": "2026-01-27T05:06:25.204Z",
+      // "updatedAt": "2026-01-27T05:06:25.204Z",
+      "__v": 0
+    },
+    {
+      "_id": "69784806c49e6cec82bc18bd",
+      "name": "PROMOTIONS-AND-CAMPAIGNS",
+      "label": "Promotions & Campaigns",
+      "categoryId": "6973764eef2d4238b87dd977",
+      //"createdAt": "2026-01-27T05:07:18.605Z",
+      // "updatedAt": "2026-01-27T05:07:18.605Z",
+      "__v": 0
+    },
+    {
+      "_id": "6978495ec49e6cec82bc18c1",
+      "name": "DELIVERY-OR-DROP-OFF-ISSUES",
+      "label": "Delivery / Drop-off Issues",
+      "categoryId": "6978448fe6920793f6305763",
+      //"createdAt": "2026-01-27T05:13:02.749Z",
+      // "updatedAt": "2026-01-27T05:13:02.749Z",
+      "__v": 0
+    },
+    {
+      "_id": "69784971c49e6cec82bc18c5",
+      "name": "PARCEL-DAMAGE-OR-LOSS",
+      "label": "Parcel Damage or Loss",
+      "categoryId": "6978448fe6920793f6305763",
+      //"createdAt": "2026-01-27T05:13:21.391Z",
+      // "updatedAt": "2026-01-27T05:13:21.391Z",
+      "__v": 0
+    },
+    {
+      "_id": "69784982c49e6cec82bc18c9",
+      "name": "TRACKING-AND-STATUS-ISSUES",
+      "label": "Tracking & Status Issues",
+      "categoryId": "6978448fe6920793f6305763",
+      //"createdAt": "2026-01-27T05:13:38.717Z",
+      // "updatedAt": "2026-01-27T05:13:38.717Z",
+      "__v": 0
+    },
+    {
+      "_id": "69784a2ac49e6cec82bc18cd",
+      "name": "SERVICE-BOOKING-ISSUES",
+      "label": "Service Booking Issues",
+      "categoryId": "697845120dde36a44489b741",
+      //"createdAt": "2026-01-27T05:16:26.724Z",
+      // "updatedAt": "2026-01-27T05:16:26.724Z",
+      "__v": 0
+    },
+    {
+      "_id": "69784a3cc49e6cec82bc18d1",
+      "name": "RENTAL-ISSUES",
+      "label": "Rental Issues",
+      "categoryId": "697845120dde36a44489b741",
+      //"createdAt": "2026-01-27T05:16:44.479Z",
+      // "updatedAt": "2026-01-27T05:16:44.479Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e3109364a8b1449349f7",
+      "name": "LOGIN-ISSUES",
+      "label": "Login Issues",
+      "categoryId": "6978452f0dde36a44489b747",
+      //"createdAt": "2026-01-28T10:21:04.289Z",
+      // "updatedAt": "2026-01-28T10:21:04.289Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e3ab237195a42ab022a2",
+      "name": "SELLER-ACCOUNT-RESTRICTIONS",
+      "label": "Seller Account Restrictions",
+      "categoryId": "6978452f0dde36a44489b747",
+      //"createdAt": "2026-01-28T10:23:39.754Z",
+      // "updatedAt": "2026-01-28T10:23:39.754Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e3d1237195a42ab022aa",
+      "name": "LISTING-APPROVAL-DELAYS",
+      "label": "Listing Approval Delays",
+      "categoryId": "6978452f0dde36a44489b747",
+      //"createdAt": "2026-01-28T10:24:17.325Z",
+      // "updatedAt": "2026-01-28T10:24:17.325Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e3d7237195a42ab022ae",
+      "name": "APP-BUGS-OR-ERRORS",
+      "label": "App Bugs / Errors",
+      "categoryId": "6978452f0dde36a44489b747",
+      //"createdAt": "2026-01-28T10:24:23.668Z",
+      // "updatedAt": "2026-01-28T10:24:23.668Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e49a237195a42ab022b2",
+      "name": "COMPLAINT",
+      "label": "Complaint",
+      "categoryId": "6978453e0dde36a44489b74a",
+      //"createdAt": "2026-01-28T10:27:38.719Z",
+      // "updatedAt": "2026-01-28T10:27:38.719Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e4aa237195a42ab022b6",
+      "name": "SUGGESTION",
+      "label": "Suggestion",
+      "categoryId": "6978453e0dde36a44489b74a",
+      //"createdAt": "2026-01-28T10:27:54.219Z",
+      // "updatedAt": "2026-01-28T10:27:54.219Z",
+      "__v": 0
+    },
+    {
+      "_id": "6979e8a10b17b66a01bfd539",
+      "name": "FRAUD-OR-ABUSE-REPORT",
+      "label": "Fraud / Abuse Report",
+      "categoryId": "6978453e0dde36a44489b74a",
+      //"createdAt": "2026-01-28T10:44:49.215Z",
+      // "updatedAt": "2026-01-28T10:44:49.215Z",
+      "__v": 0
+    },
+    {
+      "_id": "697b2b27a17f2af51c3944a1",
+      "name": "SELLER-ACCOUNT-ISSUES-SELLER-SIDE",
+      "label": "Seller Account Issues (Seller side)",
+      "categoryId": "6973764eef2d4238b87dd977",
+      //"createdAt": "2026-01-27T05:05:21.262Z",
+      // "updatedAt": "2026-01-27T05:05:21.262Z",
+      "__v": 0
+    },
+    {
+      "_id": "697b2be2a17f2af51c3944a2",
+      "name": "PICKUP-ISSUES",
+      "label": "Pick-up Issues",
+      "categoryId": "6978448fe6920793f6305763",
+      //"createdAt": "2026-01-27T05:13:02.749Z",
+      // "updatedAt": "2026-01-27T05:13:02.749Z",
+      "__v": 0
+    }
+  ];
+}
+
+// Notification -------------------------------------------------------------------------------------------------
+exports.notifications = () => {
+  return [{
+    // "_id": "697c883a7b109153c4cb4890",
+    "receiverId": "6380bb855673dc4b8d0602dd",
+    "receiverType": "Admin",
+    "actionUserId": "6380bb855673dc4b8d0602dd",
+    "actionUserType": "Admin",
+    "moduleId": "6380bb855673dc4b8d0602dd",
+    "moduleType": "Admin",
+    "message": "initialize notification",
+    "isRead": false,
+    // "createdAt": "2026-01-30T10:30:18.176Z",
+    // // "updatedAt": "2026-01-30T10:30:18.176Z",
+    "__v": 0
+  }];
+}

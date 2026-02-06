@@ -211,6 +211,9 @@ const serverTypeConfig = {
 
     // seed Database {
     seeder.adminSeeder({ isTruncate: false });
+    seeder.categorySeeder({ isTruncate: false });
+    seeder.subcategorySeeder({ isTruncate: false });
+    seeder.noficationSeeder({ isTruncate: false });
     // } seed Database
 
 
