@@ -5,35 +5,35 @@ const SupportTicket = require('../../models/SupportTicket');
 const SupportTicketQuickReplay = require('../../models/SupportTicketQuickReplay');
 
 // Helpers
-const {d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, getDateFormat, objMaker, getStr, timeSince, formatReqFiles} = require('../../helpers/helpers');
-const {getFullUrlAction} = require('../../helpers/ejsHelpers');
+const { d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, getDateFormat, objMaker, getStr, timeSince, formatReqFiles } = require('../../helpers/helpers');
+const { getFullUrlAction } = require('../../helpers/ejsHelpers');
 const Pager = require('../../infrastructure/Pager');
 const Constant = require('../../config/Constant');
 const Media = require('../../infrastructure/Media/Media');
 const SubDocument = require('../../infrastructure/SubDocument');
 const Msg = require('../../messages/admin');
 const NotificationSend = require('../../infrastructure/Notification');
-const {supportTicketReply} = require('../../infrastructure/Mail/Mail');
+const { supportTicketReply } = require('../../infrastructure/Mail/Mail');
 const path = require('path');
 
 //---------------------------------------------------------------------------------------------
 
 
 // Index View
-exports.index = async(req, res) => {
+exports.index = async (req, res) => {
     const ret = res.ret;
-    
+
     const userId = req.params.userId;
 
     ret.render('support-ticket/list', {
         requestType: Constant.ticketRequestType,
-        viewData: {userId}
+        viewData: { userId }
     });
 };
 
 
 // list
-exports.list = async(req, res) => {
+exports.list = async (req, res) => {
     const ret = res.ret;
     try {
         const reqData = req.body;
@@ -41,20 +41,20 @@ exports.list = async(req, res) => {
 
         // Page calculation {
         const Pgr = new Pager(reqData);
-        if(Pgr.isValidData) return ret.sendFail(Pgr.isValidData);
+        if (Pgr.isValidData) return ret.sendFail(Pgr.isValidData);
         let isSortCreatedAt = reqData?.orderBy?.createdAt && (Object.keys(reqData?.orderBy).length == 1) && Object.keys(reqData?.orderBy)[0] == 'createdAt';
-        let options = {page: reqData?.pageNumber || 1, limit: 10, populate: 'userId categoryId subCategoryId acceptedBy reply.adminId', sort: isSortCreatedAt ? { lastRepliedAt: 'desc', ...reqData?.orderBy }: reqData?.orderBy , lean: true,}
+        let options = { page: reqData?.pageNumber || 1, limit: 10, populate: 'userId categoryId subCategoryId acceptedBy reply.adminId', sort: isSortCreatedAt ? { lastRepliedAt: 'desc', ...reqData?.orderBy } : reqData?.orderBy, lean: true, }
         // } Page calculation
 
         // Filters {
-        if(!empty(Pgr.commonSearchFilters)) filters = {...Pgr.commonSearchFilters};
-        if(reqData?.filters?.userId) filters = {...filters, userId: reqData?.filters?.userId};
-        if(reqData?.filters?.isOpen) filters = {...filters, isOpen: reqData.filters.isOpen};
-        if(reqData?.filters?.isRead) filters = {...filters, isRead: reqData.filters.isRead};
-        if(reqData?.filters?.isRepliedByAdmin) filters = {...filters, isRepliedByAdmin: reqData.filters.isRepliedByAdmin};
-        if(reqData?.filters?.isForDeveloper) filters = {...filters, isForDeveloper: reqData.filters.isForDeveloper};
-        if(reqData?.filters?.requestType) filters = {...filters, requestType: reqData.filters.requestType};
-        if(reqData?.filters?.isDeleted) filters = {...filters, isDeleted: getBool(reqData.filters.isDeleted)};
+        if (!empty(Pgr.commonSearchFilters)) filters = { ...Pgr.commonSearchFilters };
+        if (reqData?.filters?.userId) filters = { ...filters, userId: reqData?.filters?.userId };
+        if (reqData?.filters?.isOpen) filters = { ...filters, isOpen: reqData.filters.isOpen };
+        if (reqData?.filters?.isRead) filters = { ...filters, isRead: reqData.filters.isRead };
+        if (reqData?.filters?.isRepliedByAdmin) filters = { ...filters, isRepliedByAdmin: reqData.filters.isRepliedByAdmin };
+        if (reqData?.filters?.isForDeveloper) filters = { ...filters, isForDeveloper: reqData.filters.isForDeveloper };
+        if (reqData?.filters?.requestType) filters = { ...filters, requestType: reqData.filters.requestType };
+        if (reqData?.filters?.isDeleted) filters = { ...filters, isDeleted: getBool(reqData.filters.isDeleted) };
         // d(filters, 'filters');
         // } Filters
 
@@ -65,7 +65,7 @@ exports.list = async(req, res) => {
 
 
         let newRecords = [];
-        if(!empty(pager.docs)) {
+        if (!empty(pager.docs)) {
             (pager.docs || []).forEach((row, i) => {
                 let user = row.userId || {};
                 // dd(user);
@@ -81,7 +81,7 @@ exports.list = async(req, res) => {
                 row.actionDeleteDirect = row.isDeleted ? null : getFullUrlAction('support-ticket/delete/' + row._id);
                 row.profileImage = Media.getAdminUserImage(user.profileImage);
                 row.createdAt = timeSince(row.createdAt);
-                row.isRepliedByAdmin = row.isRepliedByAdmin ? 'Yes': 'No';
+                row.isRepliedByAdmin = row.isRepliedByAdmin ? 'Yes' : 'No';
                 row.ticketStatus = { _id: row._id, isDeleted: row?.isDeleted ? true : false };
                 row.acceptedBy = row?.acceptedBy?.name;
                 row.categoryId = row?.categoryId?.label;
@@ -92,10 +92,10 @@ exports.list = async(req, res) => {
             });
         }
 
-        const resData = {records: newRecords, pageNumber: pager.page, totalPages: pager.totalPages, totalRecords: pager.totalDocs, limit: pager.limit,}
+        const resData = { records: newRecords, pageNumber: pager.page, totalPages: pager.totalPages, totalRecords: pager.totalDocs, limit: pager.limit, }
 
         ret.sendSuccess(resData, 'Record found');
-    } catch(e) { console.log(e); ret.err500(e); }
+    } catch (e) { console.log(e); ret.err500(e); }
 };
 
 
@@ -136,23 +136,23 @@ exports.create = async (req, res) => {
 
 
 // Details
-exports.details = async(req, res) => {
+exports.details = async (req, res) => {
     const ret = res.ret;
     try {
         const id = req.params.id;
 
         // Check validation {
-        const isInvalid = checkValidation({id}, {
+        const isInvalid = checkValidation({ id }, {
             id: 'required | objectId',
         });
-        if(isInvalid) return ret.goBackError(isInvalid);
+        if (isInvalid) return ret.goBackError(isInvalid);
         // } Check validation
         // SupportTicketQuickReplay.insertMany([
         //     {title: 'test', description: 'test'}
         // ]);
         const quickReplies = await SupportTicketQuickReplay.find({}).sort({ title: 1 }).exec() || [];
         // dd(quickReplies);
-        const record = await SupportTicket.findById(id).populate('userId').populate('reply.adminId categoryId').exec();
+        const record = await SupportTicket.findById(id).populate('userId categoryId subCategoryId acceptedBy reply.adminId').exec();
         if (empty(record)) return ret.goBackError();
 
         const resData = { ...record._doc, quickReplies };

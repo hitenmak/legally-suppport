@@ -1,0 +1,162 @@
+<% ConfigLabels={'title': {'subCat': 'Sub Category' , 'subCats' : 'Sub Categories' },}; %>
+
+    <!-- Style ------------------------------------------------------------>
+    <%- contentFor('style') %>
+
+
+        <!-- Content ------------------------------------------------------------>
+        <%- contentFor('content') %>
+
+            <div class="content-wrapper">
+
+                <!-- Page Header -->
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <h1>
+                                    <%= ConfigLabels.title.subCats; %>
+
+                                        <span class=" badge badge-secondary ml-2 _pagerTotalRecords d-none"></span>
+                                </h1>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="row justify-content-end">
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select class="custom-select form-control-sm" id="categoryId"
+                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
+                                                <option value="" selected>- All -</option>
+                                                <% if(categories) { %>
+                                                    <% for (const c of categories) { %>
+                                                        <option value="<%=c?._id%>">
+                                                            <%= c?.label %>
+                                                        </option>
+                                                        <% } %>
+                                                            <%}%>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--<div class="col-sm-2">
+                            <div class="form-group">
+                                <label>From</label>
+                                <input type="date" class="form-control form-control-sm fromDate" id="fromDate">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label> To</label>
+                                <input type="date" class="form-control form-control-sm toDate" id="toDate">
+                            </div>
+                        </div>-->
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+                <!-- / Page Header -->
+
+                <!-- Main content -->
+                <ANY id="tw">
+
+                </ANY>
+
+                <!-- /.content -->
+            </div>
+
+
+            <!-- Script ------------------------------------------------------------>
+            <%- contentFor('script') %>
+
+                <script>
+                    tableLayout = {
+                        // ticketStatus: { label: "", displayType: "actionIsDeletedDisableCheckbox", isSearchable: 0, isSortable: 0 },
+                        label: { label: 'Name', displayType: 'text', isSearchable: 1, isSortable: 1 },
+                        // categoryId: { label: 'Category', displayType: 'text', isSearchable: 0, isSortable: 1 },
+                        categoryName: { label: 'Category', displayType: 'text', isSearchable: 1, isSortable: 1 },
+                    };
+                    // requiredField = {}
+
+                    recordUrls = {
+                        listing: 'subcategory/list'
+                    };
+
+                    pageConfig = {
+                        showRowAction: true,
+                    };
+
+                    const addPageNumber = () => {
+                        $('._tbody a.btn').each(i => {
+                            const el = $($('._tbody a.btn')[i]);
+                            let url = el.attr('href') || '';
+                            if (url.includes('subcategory/details/'))
+                                el.attr('href', `${url}?page=${pager.pageNumber}`);
+                        })
+                    }
+
+                    $(document).on('click', '._tbody a.btn', function (e) {
+                        const el = $(this);
+                        let url = el.attr('href') || '';
+                        if (url.includes('support-ticket/details/') || url.includes('support-ticket/delete/')) {
+                            e.preventDefault();
+                            localStorage.setItem('currentPageSupportTickets', pager.pageNumber);
+                            window.location.href = url; //`${url}?page=${pager.pageNumber}`;
+                        }
+                    });
+
+                    const updateFilter = (isOldGet = false) => {
+                        let currentFilters = localStorage.getItem('currentFiltersSubCategories');
+                        if (currentFilters) currentFilters = JSON.parse(currentFilters) || {}
+                        else currentFilters = {};
+                        if (isOldGet) {
+
+                            currentFilters.categoryId = currentFilters.categoryId || $('#categoryId').find(":selected").val();
+                            currentFilters.name = currentFilters.name || $('#name').find(":selected").val();
+                            currentFilters.categoryName = currentFilters.isRepliedByAdmin || $('#categoryName').find(":selected").val();
+                            $(`#categoryId option[value="${currentFilters.categoryId}"]`).attr('selected', 'selected');
+                            $(`#name option[value="${currentFilters.name}"]`).attr('selected', 'selected');
+                            $(`#categoryName option[value="${currentFilters.categoryName}"]`).attr('selected', 'selected');
+
+                        } else {
+                            currentFilters.categoryId = $('#categoryId').find(":selected").val();
+                            currentFilters.name = $('#name').find(":selected").val();
+                            currentFilters.categoryName = $('#categoryName').find(":selected").val();
+                        }
+
+
+                        localStorage.setItem('currentFiltersSubCategories', JSON.stringify(currentFilters));
+
+                        setFilters(currentFilters.categoryId, 'categoryId');
+                        setFilters(currentFilters.name, 'name');
+                        setFilters(currentFilters.categoryName, 'categoryName');
+
+                        let currentPage = localStorage.getItem('currentPageSubCategories');
+                        if (currentPage)
+                            localStorage.setItem('currentPageSubCategories', 1);
+
+                        getPage(currentPage ? currentPage : 1);
+
+                    }
+
+                    init(() => {
+                        initTable(true, false);
+                        updateFilter(true);
+                    });
+
+                    $(document).on('click', '.goToPage', function () {
+                        let currentFilters = localStorage.getItem('currentFiltersSubCategories');
+                        if (currentFilters) currentFilters = JSON.parse(currentFilters) || {};
+
+                        getPage($(this).attr('data-pg-no'));
+                    });
+                    $('#categoryId').change(function () {
+                        updateFilter();
+                        // let currentVal = $(this).find(":selected").val();
+                        // applyFilters(currentVal, 'requestType');
+                    });
+                </script>

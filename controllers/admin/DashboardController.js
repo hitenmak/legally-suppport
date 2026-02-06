@@ -154,7 +154,7 @@ exports.index = async (req, res) => {
     ]);
     if (adminRes && adminRes.length > 0) {
         admin = adminRes[0];
-
+        res.locals.admin = admin;
         admin.tickets = admin?.count || 0;
         admin.avgAcceptTime = formatDuration(admin?.avgAcceptTime);
         admin.avgResTime = formatDuration(admin?.avgResTime);

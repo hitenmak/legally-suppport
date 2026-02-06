@@ -18,6 +18,10 @@ const DashboardController = require('../controllers/admin/DashboardController');
 const UserController = require('../controllers/admin/UserController');
 const SupportTicketController = require('../controllers/admin/SupportTicketController');
 const NotificationController = require('../controllers/admin/NotificationController');
+const CategoryController = require('../controllers/admin/CategoryController');
+const SubcategoryController = require('../controllers/admin/SubcategoryController');
+
+
 const Notification = require('../models/Notification');
 
 //----------------------------------------------
@@ -95,6 +99,18 @@ router.post('/support-ticket/accept', authUser, SupportTicketController?.accept)
 // Notifications
 router.get('/notification/list', authUser, NotificationController.list);
 router.post('/notifications/markAsRead', authUser, NotificationController.markAsRead);
+
+//----------------------------------------------
+// Categories
+router.get('/categories', authUser, notificationMiddleware, CategoryController.index);
+router.post('/category/list', CategoryController.list);
+router.post('/category/create', CategoryController.create);
+
+//----------------------------------------------
+// SubCategories
+router.get('/subcategories', authUser, notificationMiddleware, SubcategoryController.index);
+router.post('/subcategory/list', SubcategoryController.list);
+router.post('/subcategory/create', SubcategoryController.create);
 
 //----------------------------------------------
 // Errors

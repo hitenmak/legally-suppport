@@ -82,8 +82,19 @@ const isPermissionGranted = (key, name = 'no-permission-block') => {
                         <p>Support Tickets</p>
                     </a>
                 </li>
-                
-
+               
+                 <li class="nav-item ">
+                    <a href="<%= _.getFullUrl('categories') %>" class="nav-link <%= isActiveItem('categories') %>"> <i class="nav-icon fas bi bi-tag-fill"></i>
+                        <p>Categories</p>
+                    </a>
+                </li>
+               
+                <li class="nav-item ">
+                    <a href="<%= _.getFullUrl('subcategories') %>" class="nav-link <%= isActiveItem('subcategories') %>"> <i class="nav-icon fas bi bi-tags-fill"></i>
+                        <p>Subcategories</p>
+                    </a>
+                </li>
+               
 
                 
 
