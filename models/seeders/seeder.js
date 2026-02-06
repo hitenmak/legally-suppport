@@ -1,13 +1,12 @@
 // Models
-const Admin = require('../../models/Admin');
+const Admin = require('../Admin');
 const DataSets = require('./dataSets');
-
-
-// Helpers
-const { d } = require('../../helpers/helpers');
 const Category = require('../Category');
 const SubCategory = require('../SubCategory');
 const Notification = require('../Notification');
+
+// Helpers
+const { d } = require('../../helpers/helpers');
 
 //--------------------------------------------------------------
 
