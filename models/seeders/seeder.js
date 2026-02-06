@@ -60,7 +60,7 @@ exports.noficationSeeder = async ({ isTruncate }) => {
 			await Notification.deleteMany({});
 		}
 		for (const notification of DataSets?.notifications()) {
-			await Notification.updateOne({ email: notification?.email }, { $setOnInsert: notification }, { upsert: true });
+			await Notification.updateOne({ moduleType: notification?.moduleType }, { $setOnInsert: notification }, { upsert: true });
 		}
 		d('Notification Seeded');
 	} catch (error) {
