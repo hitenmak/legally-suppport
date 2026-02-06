@@ -39,7 +39,9 @@ exports.index = async (req, res) => {
         },
         {
             $addFields: {
-                count: { $size: "$tickets" },
+                count: {
+                    $size: "$tickets"
+                },
                 avgAcceptTime: {
                     $avg: {
                         $map: {
@@ -68,13 +70,20 @@ exports.index = async (req, res) => {
             }
         },
         {
-            $unwind: "$tickets"
+            $unwind: {
+                path: "$tickets",
+                preserveNullAndEmptyArrays: true
+            }
         },
         {
             $match: {
                 $or: [
-                    { tickets: null },
-                    { "tickets.isDeleted": false }
+                    {
+                        tickets: null
+                    },
+                    {
+                        "tickets.isDeleted": false
+                    }
                 ]
             }
         },
@@ -83,8 +92,8 @@ exports.index = async (req, res) => {
                 name: 1,
                 email: 1,
                 count: 1,
+                isActive: 1,
                 avgAcceptTime: 1,
-
                 userReplyTime: {
                     $min: {
                         $map: {
@@ -130,11 +139,20 @@ exports.index = async (req, res) => {
                     $cond: {
                         if: {
                             $and: [
-                                { $ne: ["$userReplyTime", null] },
-                                { $ne: ["$adminReplyTime", null] }
+                                {
+                                    $ne: ["$userReplyTime", null]
+                                },
+                                {
+                                    $ne: ["$adminReplyTime", null]
+                                }
                             ]
                         },
-                        then: { $subtract: ["$adminReplyTime", "$userReplyTime"] },
+                        then: {
+                            $subtract: [
+                                "$adminReplyTime",
+                                "$userReplyTime"
+                            ]
+                        },
                         else: null
                     }
                 }
