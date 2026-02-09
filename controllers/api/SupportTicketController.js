@@ -14,6 +14,8 @@ const { supportTicketCreate, supportTicketReply } = require('../../infrastructur
 const path = require('path');
 const Admin = require('../../models/Admin');
 const Notification = require('../../models/Notification');
+const Category = require('../../models/Category');
+const SubCategory = require('../../models/SubCategory');
 
 
 //---------------------------------------------------------------------------------------------
@@ -82,12 +84,27 @@ exports.createticket = async (req, res) => {
         const ret = res.ret;
         const reqData = req.body;
         // Check validation
+
+        let subCatCount;
+        if (reqData?.categoryId) {
+            const isCategoryExist = await Category.findOne({ _id: reqData?.categoryId }).exec()
+            if (!isCategoryExist) return ret.sendFail('Category does not exist');
+
+            subCatCount = await SubCategory.countDocuments({ categoryId: reqData?.categoryId }).exec();
+            if (subCatCount) {
+                if (reqData?.subCategoryId) {
+                    const isSubCategoryExist = await SubCategory.findOne({ _id: reqData?.subCategoryId }).exec()
+                    if (!isSubCategoryExist) return ret.sendFail('SubCategory does not exist');
+                }
+            }
+        }
+
         const isInvalid = checkValidation(reqData, {
             // requestType: `required|in:${Constant.ticketRequestTypeKeys.join(',')}`,
             message: 'required',
             categoryId: 'required|objectId',
-            subCategoryId: 'required|objectId',
-            slug: `required|in: ${Constant?.questionKeys}`,
+            subCategoryId: (subCatCount) ? 'required|objectId' : '',
+            // slug: `required|in: ${Constant?.questionKeys}`,
         });
         if (isInvalid) return ret.sendFail(isInvalid);
         /*
@@ -137,10 +154,10 @@ exports.createticket = async (req, res) => {
 
         // record.requestType = getStr(reqData.requestType);
         const result = await SupportTicket.findOne({}, {}, { sort: { _id: -1 } }).exec();
-        record.categoryId = getStr(reqData?.categoryId),
-            record.subCategoryId = getStr(reqData?.subCategoryId),
-            // record.questions = (reqData?.questions),
-            record.userId = isExistEmail?._id;
+        record.categoryId = getStr(reqData?.categoryId);
+        if (reqData?.subCategoryId) record.subCategoryId = getStr(reqData?.subCategoryId);
+        // record.questions = (reqData?.questions),
+        record.userId = isExistEmail?._id;
         record.ticketId = result ? (parseInt(result.ticketId) + 1).toString().padStart(8, '0') : (1).toString().padStart(8, '0');
         record.reply.push({
             message: getStr(reqData.message),
@@ -185,7 +202,8 @@ exports.createticket = async (req, res) => {
                 }
             }
 
-            const admins = await Admin.find({ isMaster: true });
+            const supportTicket = await SupportTicket.findOne({ _id: record?._id }).populate('userId categoryId subCategoryId').exec();
+            const admins = await Admin.find({ $or: [{ isMaster: true }, { isAgent: true }] });
             admins.forEach((admin) => {
                 Notification.create({
                     "receiverId": admin?._id,
@@ -198,7 +216,7 @@ exports.createticket = async (req, res) => {
                 })
             })
             const adminMails = admins.map(a => a?.email);
-            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, requestType: record?.requestType, userName: reqData.email, email: reqData.email, message: latestReply?.message })
+            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, userName: reqData.email, email: reqData.email, message: latestReply?.message, category: supportTicket?.categoryId?.label, subCategory: supportTicket?.subCategoryId?.label }).catch(e => console.log(e));
             ret.sendSuccess(resData, Msg.supportTicket.create);
         }).catch(e => ret.err500(e));
     });
@@ -379,13 +397,13 @@ exports.getSupportTicket = async (req, res) => {
                 id: 'required | objectId',
             });
             if (isInvalid) return ret.sendFail(isInvalid);
-            record = await SupportTicket.findById(id).populate('userId').populate('reply.adminId').exec();
+            record = await SupportTicket.findById(id).populate('userId categoryId subCategoryId').populate('reply.adminId').exec();
         } else {
             isInvalid = checkValidation({ ticketId }, {
                 ticketId: 'required | string',
             });
             if (isInvalid) return ret.sendFail(isInvalid);
-            record = await SupportTicket.findOne({ ticketId }).populate('userId').populate('reply.adminId').exec();
+            record = await SupportTicket.findOne({ ticketId }).populate('userId categoryId subCategoryId').populate('reply.adminId').exec();
         }
         if (!record) return ret.sendFail(Msg.supportTicket.notFound);
         const result = MakeData.supportTicketDetails(record);

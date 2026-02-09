@@ -80,8 +80,16 @@ exports.supportTicketDetails = (row) => {
         reply: (row.reply.length ? row.reply.map(r => {
             return reply(r, row.userId);
         }) : []),
-        categoryId: row.categoryId,
-        subCategoryId: row.subCategoryId,
+        categoryId: {
+            _id: row?.categoryId?._id,
+            name: getStr(row?.categoryId?.name),
+            label: getStr(row?.categoryId?.label),
+        },
+        subCategoryId: {
+            _id: row?.subCategoryId?._id,
+            name: getStr(row?.subCategoryId?.name),
+            label: getStr(row?.subCategoryId?.label),
+        },
         acceptedBy: row?.acceptedBy,
         acceptedAt: row?.acceptedAt,
         createdAt: getDateFormat(row.createdAt, 'D MMM YY, h:mm:ss A'),

@@ -20,10 +20,17 @@
         </tr>
         <tr>
             <td style="font-family:Arial,Helvetica,sans-serif;padding:10px;width:66%">
-                <b>Request type: </b>
-                <%= requestType %>
+                <b>Category: </b>
+                <%= category ? category : 'N/A' %>
             </td>
         </tr>
+        <tr>
+            <td style="font-family:Arial,Helvetica,sans-serif;padding:10px;width:66%">
+                <b>Subcategory: </b>
+                <%= subCategory ? subCategory : 'N/A' %>
+            </td>
+        </tr>
+
         <tr>
             <td style="font-family:Arial,Helvetica,sans-serif;padding:10px;border-bottom:1px solid #ccc;width:66%">
                 <b>Message: </b>

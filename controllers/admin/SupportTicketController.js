@@ -5,7 +5,7 @@ const SupportTicket = require('../../models/SupportTicket');
 const SupportTicketQuickReplay = require('../../models/SupportTicketQuickReplay');
 
 // Helpers
-const { d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, getDateFormat, objMaker, getStr, timeSince, formatReqFiles } = require('../../helpers/helpers');
+const { d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, getDateFormat, objMaker, getStr, timeSince, formatReqFiles, flipOnKey } = require('../../helpers/helpers');
 const { getFullUrlAction } = require('../../helpers/ejsHelpers');
 const Pager = require('../../infrastructure/Pager');
 const Constant = require('../../config/Constant');
@@ -15,6 +15,8 @@ const Msg = require('../../messages/admin');
 const NotificationSend = require('../../infrastructure/Notification');
 const { supportTicketReply } = require('../../infrastructure/Mail/Mail');
 const path = require('path');
+const SubCategory = require('../../models/SubCategory');
+const Category = require('../../models/Category');
 
 //---------------------------------------------------------------------------------------------
 
@@ -24,10 +26,14 @@ exports.index = async (req, res) => {
     const ret = res.ret;
 
     const userId = req?.user?._id;
-
+    const isAgent = getBool(req?.user?.isAgent);
+    const categories = await Category.find({});
+    let subCategories = await SubCategory.find({});
+    subCategories = flipOnKey(subCategories, 'categoryId');
     ret.render('support-ticket/list', {
         requestType: Constant.ticketRequestType,
-        viewData: { userId, isMasterAdmin: req?.isMasterAdmin, userPermission: req?.userPermission },
+        categories, subCategories,
+        viewData: { userId, isMasterAdmin: req?.isMasterAdmin, userPermission: req?.userPermission, isAgent, },
     });
 };
 
@@ -55,7 +61,8 @@ exports.list = async (req, res) => {
         if (reqData?.filters?.isForDeveloper) filters = { ...filters, isForDeveloper: reqData.filters.isForDeveloper };
         if (reqData?.filters?.requestType) filters = { ...filters, requestType: reqData.filters.requestType };
         if (reqData?.filters?.isDeleted) filters = { ...filters, isDeleted: getBool(reqData.filters.isDeleted) };
-        if (!getBool(req?.query?.isMasterAdmin)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
+        if (reqData?.filters?.categoryId) filters = { ...filters, categoryId: reqData.filters.categoryId };
+        if (getBool(req?.query?.isAgent)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
         // d(filters, 'filters');
         // } Filters
 
@@ -195,7 +202,7 @@ exports.replayStore = async (req, res) => {
         const { ticketId, message } = reqData;
         const adminId = req.user._id;
 
-        const record = await SupportTicket.findById(ticketId).exec();
+        const record = await SupportTicket.findById(ticketId).populate('userId categoryId subCategoryId').exec();
         if (empty(record)) return ret.goBackError();
         const replySD = new SubDocument(record.reply);
 
@@ -228,7 +235,7 @@ exports.replayStore = async (req, res) => {
                 }
             }
 
-            await supportTicketReply({ toEmail: user.email, attachments, ticketId: record?.ticketId, requestType: record?.requestType, userName: req.user.name, email: req.user.email, message: latestReply?.message })
+            await supportTicketReply({ toEmail: user.email, attachments, ticketId: record?.ticketId, userName: req.user.name, email: req.user.email, message: latestReply?.message, category: record?.categoryId?.label, subCategory: record?.subCategoryId?.label })
 
             ret.redirect(`support-ticket/details/${updatedRecord._id}`, 'Saved');
 

@@ -117,7 +117,7 @@
 
                             currentFilters.categoryId = currentFilters.categoryId || $('#categoryId').find(":selected").val();
                             currentFilters.name = currentFilters.name || $('#name').find(":selected").val();
-                            currentFilters.categoryName = currentFilters.isRepliedByAdmin || $('#categoryName').find(":selected").val();
+                            currentFilters.categoryName = currentFilters.categoryName || $('#categoryName').find(":selected").val();
                             $(`#categoryId option[value="${currentFilters.categoryId}"]`).attr('selected', 'selected');
                             $(`#name option[value="${currentFilters.name}"]`).attr('selected', 'selected');
                             $(`#categoryName option[value="${currentFilters.categoryName}"]`).attr('selected', 'selected');

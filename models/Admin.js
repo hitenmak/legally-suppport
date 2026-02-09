@@ -5,13 +5,14 @@ const { jsonStructure } = require('./Structure/jsonStructure');
 
 const schema = new Mongoose.Schema({
 
-        name: { type: String, default: null },
-        email: { type: String, unique: true, required: true },
-        hash: { type: String, default: null },
-        salt: { type: String, default: null },
-        isMaster: { type: Boolean, default: false },
-        isActive: { type: Boolean, default: true },
-        permission: jsonStructure,
+    name: { type: String, default: null },
+    email: { type: String, unique: true, required: true },
+    hash: { type: String, default: null },
+    salt: { type: String, default: null },
+    isMaster: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    permission: jsonStructure,
+    isAgent: { type: Boolean, default: false },
 
     },
     { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt', deleteAt: 'deleteAt' } }
