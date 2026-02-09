@@ -31,8 +31,8 @@ exports.authUser = (req, res, next) => {
             req.user = user;
             req.user.hash = undefined;
             req.user.salt = undefined;
-            req.userPermission = JSON.parse(user.permission) || {};
-            req.isMasterAdmin = user.isMaster || false;
+            req.userPermission = JSON.parse(user?.permission) || {};
+            req.isMasterAdmin = user?.isMaster || false;
             // if (req.user.isMaster) {
             //     for (k in permission) {
             //         permission[k] = getBool(permission[k]);

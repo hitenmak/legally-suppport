@@ -77,7 +77,7 @@ exports.create = async (req, res) => {
 exports.createticket = async (req, res) => {
     Media.storeSupportAttachment('attachments')(req, res, async () => {
         // ,Screenshot of payment (optional but recommended),Upload photo/video evidence,Screenshot (if applicable),Screenshot of error message,Upload photo evidence (mandatory),Screenshot of tracking screen,Photo evidence (if any),Screenshot or screen recording,Upload evidence (if fraud)
-        dd(req.files);
+        // dd(req.files);
         req = formatReqFiles(req);
         const ret = res.ret;
         const reqData = req.body;
@@ -109,15 +109,15 @@ exports.createticket = async (req, res) => {
                 if (isInvalid) return ret.sendFail(isInvalidQuestions);
                 */
         const record = new SupportTicket;
-        const isExistEmail = await User.findOne({ email: filterUsername(reqData.email) }).exec();
+        const isExistEmail = await User.findOne({ email: filterUsername(reqData?.email) }).exec();
 
         if (empty(isExistEmail)) {
             const { hash, salt } = makeHashPassword("12345678");
             let newRecord = {
-                name: getVal(reqData.name),
-                username: getVal(filterUsername(reqData.email)),
-                email: getVal(filterUsername(reqData.email)),
-                phone: getVal(reqData.phone),
+                name: getVal(reqData?.name),
+                username: getVal(filterUsername(reqData?.email)),
+                email: getVal(filterUsername(reqData?.email)),
+                phone: getVal(reqData?.phone),
             }
 
             newRecord.hash = hash;
@@ -132,7 +132,7 @@ exports.createticket = async (req, res) => {
             // record.categoryId = getStr(reqData?.categoryId),
             // record.subCategoryId = getStr(reqData?.subCategoryId),
             // record.questions = (reqData?.questions),
-            record.userId = isExistEmail._id;
+            record.userId = isExistEmail?._id;
         }
 
         // record.requestType = getStr(reqData.requestType);
@@ -140,7 +140,7 @@ exports.createticket = async (req, res) => {
         record.categoryId = getStr(reqData?.categoryId),
             record.subCategoryId = getStr(reqData?.subCategoryId),
             // record.questions = (reqData?.questions),
-            record.userId = isExistEmail._id;
+            record.userId = isExistEmail?._id;
         record.ticketId = result ? (parseInt(result.ticketId) + 1).toString().padStart(8, '0') : (1).toString().padStart(8, '0');
         record.reply.push({
             message: getStr(reqData.message),

@@ -23,11 +23,11 @@ const path = require('path');
 exports.index = async (req, res) => {
     const ret = res.ret;
 
-    const userId = req.params.userId;
+    const userId = req?.user?._id;
 
     ret.render('support-ticket/list', {
         requestType: Constant.ticketRequestType,
-        viewData: { userId }
+        viewData: { userId, isMasterAdmin: req?.isMasterAdmin, userPermission: req?.userPermission },
     });
 };
 
@@ -55,6 +55,7 @@ exports.list = async (req, res) => {
         if (reqData?.filters?.isForDeveloper) filters = { ...filters, isForDeveloper: reqData.filters.isForDeveloper };
         if (reqData?.filters?.requestType) filters = { ...filters, requestType: reqData.filters.requestType };
         if (reqData?.filters?.isDeleted) filters = { ...filters, isDeleted: getBool(reqData.filters.isDeleted) };
+        if (!getBool(req?.query?.isMasterAdmin)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
         // d(filters, 'filters');
         // } Filters
 
@@ -62,7 +63,6 @@ exports.list = async (req, res) => {
         const pager = await SupportTicket.paginate(filters, options);
 
         // } Make Query
-
 
         let newRecords = [];
         if (!empty(pager.docs)) {

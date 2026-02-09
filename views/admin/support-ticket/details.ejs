@@ -46,50 +46,58 @@
                                                             </span>
                                                             <!--                                            </h3>-->
                                                             <!-- Read UnRead -->
-                                                            <form method="POST" action="<%= ConfigLabels.markReadUrl %>"
-                                                                role="form">
-                                                                <input type="hidden" name="ticketId"
-                                                                    class="form-control" value="<%= _id %>">
-                                                                <input type="hidden" name="isRead" class="form-control"
-                                                                    value="<%= isRead %>">
-                                                                <button type="submit"
-                                                                    class="btn btn-sm <%= isRead ? 'bg-gradient-success' : 'bg-gradient-secondary' %>  d-inline float-right mr-2">
-                                                                    <i class="fa-solid fa-check-double"></i>
-                                                                </button>
-                                                            </form>
-                                                            <% if (!acceptedBy && !isDeleted && isOpen ) { %>
+                                                            <% if (acceptedBy && AuthUser?.id==acceptedBy?._id) { %>
+
                                                                 <form method="POST"
-                                                                    action="<%= ConfigLabels.acceptUrl %>" role="form">
-                                                                    <input type="hidden" class="form-control" name="id"
-                                                                        value="<%= _id %>">
-                                                                    <button type="submit" <%=(acceptedBy ||isDeleted ||
-                                                                        !isOpen ) ? "disabled" : "" %>
-                                                                        style="<%= (acceptedBy ||isDeleted || !isOpen )
-                                                                            ? 'display:none;' : '' %>"
-                                                                            class="btn btn-sm d-inline
-                                                                            float-right mr-2 <%= !(acceptedBy
-                                                                                ||isDeleted || !isOpen )
-                                                                                ? 'bg-gradient-success'
-                                                                                : 'bg-gradient-secondary' %>">
-                                                                                Accept
+                                                                    action="<%= ConfigLabels.markReadUrl %>"
+                                                                    role="form">
+                                                                    <input type="hidden" name="ticketId"
+                                                                        class="form-control" value="<%= _id %>">
+                                                                    <input type="hidden" name="isRead"
+                                                                        class="form-control" value="<%= isRead %>">
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm <%= isRead ? 'bg-gradient-success' : 'bg-gradient-secondary' %>  d-inline float-right mr-2">
+                                                                        <i class="fa-solid fa-check-double"></i>
                                                                     </button>
                                                                 </form>
                                                                 <% } %>
-                                                                    <form method="POST"
-                                                                        action="<%= ConfigLabels.markForDeveloper %>"
-                                                                        role="form">
-                                                                        <input type="hidden" name="ticketId"
-                                                                            class="form-control" value="<%= _id %>">
-                                                                        <input type="hidden" name="isForDeveloper"
-                                                                            class="form-control"
-                                                                            value="<%= isForDeveloper %>">
-                                                                        <button type="submit"
-                                                                            class="btn btn-sm bg-gradient-secondary d-inline float-right mr-2">
-                                                                            <i
-                                                                                class="fa-solid fa-star <%= isForDeveloper ? 'text-warning' : 'text-secondary' %>"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                    <!-- / Read UnRead -->
+                                                                    <% if (!acceptedBy && !isDeleted && isOpen ) { %>
+                                                                        <form method="POST"
+                                                                            action="<%= ConfigLabels.acceptUrl %>"
+                                                                            role="form">
+                                                                            <input type="hidden" class="form-control"
+                                                                                name="id" value="<%= _id %>">
+                                                                            <button type="submit" <%=(acceptedBy
+                                                                                ||isDeleted || !isOpen ) ? "disabled"
+                                                                                : "" %>
+                                                                                style="<%= (acceptedBy ||isDeleted ||
+                                                                                    !isOpen ) ? 'display:none;' : '' %>"
+                                                                                    class="btn btn-sm d-inline
+                                                                                    float-right mr-2 <%= !(acceptedBy
+                                                                                        ||isDeleted || !isOpen )
+                                                                                        ? 'bg-gradient-success'
+                                                                                        : 'bg-gradient-secondary' %>">
+                                                                                        Accept
+                                                                            </button>
+                                                                        </form>
+                                                                        <% } %>
+                                                                            <form method="POST"
+                                                                                action="<%= ConfigLabels.markForDeveloper %>"
+                                                                                role="form">
+                                                                                <input type="hidden" name="ticketId"
+                                                                                    class="form-control"
+                                                                                    value="<%= _id %>">
+                                                                                <input type="hidden"
+                                                                                    name="isForDeveloper"
+                                                                                    class="form-control"
+                                                                                    value="<%= isForDeveloper %>">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-sm bg-gradient-secondary d-inline float-right mr-2">
+                                                                                    <i
+                                                                                        class="fa-solid fa-star <%= isForDeveloper ? 'text-warning' : 'text-secondary' %>"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                            <!-- / Read UnRead -->
                                                         </h3>
                                                         <span class="username">
                                                             <a href="<%= userProfileDetails %>">
@@ -173,7 +181,7 @@
                                 <div class="card">
                                     <!-- Body -->
                                     <div class="card-body">
-                                        <% if(isOpen){ %>
+                                        <% if(isOpen && (!acceptedBy || AuthUser?.id==acceptedBy?._id)){ %>
                                             <form name="this_form" id="this_form" method="POST"
                                                 action="<%= ConfigLabels.storeUrl %>" role="form"
                                                 enctype="multipart/form-data">
@@ -221,24 +229,24 @@
 
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <% if(!isDeleted) {%>
+                                                        <% if(!isDeleted &&(AuthUser?.id==acceptedBy?._id)) {%>
                                                             <a class="btn bg-gradient-danger d-inline float-right mr-2 "
                                                                 href="<%= ConfigLabels.deleteUrl %>">Delete</a>
+
+                                                            <!-- Close Ticket -->
+                                                            <form name="this_form" id="this_form" method="POST"
+                                                                action="<%= ConfigLabels.statusUrl %>" role="form">
+                                                                <input type="hidden" name="ticketId"
+                                                                    class="form-control" value="<%= _id %>">
+                                                                <input type="hidden" name="isOpen" class="form-control"
+                                                                    value="<%= isOpen %>">
+
+                                                                <button type="submit"
+                                                                    class="btn  mr-2 <%= isOpen ? 'bg-gradient-warning' : 'bg-gradient-success' %> d-inline float-right">
+                                                                    <%= isOpen ? 'Close Ticket' : 'Reopen Ticket' %>
+                                                                </button>
+                                                            </form>
                                                             <%}%>
-
-                                                                <!-- Close Ticket -->
-                                                                <form name="this_form" id="this_form" method="POST"
-                                                                    action="<%= ConfigLabels.statusUrl %>" role="form">
-                                                                    <input type="hidden" name="ticketId"
-                                                                        class="form-control" value="<%= _id %>">
-                                                                    <input type="hidden" name="isOpen"
-                                                                        class="form-control" value="<%= isOpen %>">
-
-                                                                    <button type="submit"
-                                                                        class="btn  mr-2 <%= isOpen ? 'bg-gradient-warning' : 'bg-gradient-success' %> d-inline float-right">
-                                                                        <%= isOpen ? 'Close Ticket' : 'Reopen Ticket' %>
-                                                                    </button>
-                                                                </form>
                                                                 <!-- / Close Ticket -->
                                                                 <button
                                                                     class="btn bg-gradient-secondary d-inline float-right mr-2"

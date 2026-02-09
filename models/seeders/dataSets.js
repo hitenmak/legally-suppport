@@ -77,8 +77,8 @@ exports.admins = () => {
     // { _id: '6380bb855673dc4b8d0602dd', name: 'Hello', email: 'hello@mailinator.com', isMaster: true, hash: hash, salt: salt },
     // { _id: '642d0a040d378f22a805aad7', name: 'Hello', email: 'admin@ifortune.com', isMaster: true, hash: ifortune.hash, salt: ifortune.salt },
     // { _id: '642d0a040d378f22a805aad8', name: 'iFortune Admin', email: 'rrpmachinee', isMaster: true, hash: main.hash, salt: main.salt },
-    { name: 'Nicholas ', email: 'nicholas@legallyng.com', isMaster: true, hash: main.hash, salt: main.salt },
-    { name: 'Joyce', email: 'joyce@legallyng.com', isMaster: true, hash: main.hash, salt: main.salt },
+    { name: 'Nicholas ', email: 'nicholas@legallyng.com', isMaster: false, hash: main.hash, salt: main.salt },
+    { name: 'Joyce', email: 'joyce@legallyng.com', isMaster: false, hash: main.hash, salt: main.salt },
     { name: 'Darshan', email: 'd.nagle.digitalrooar@gmail.com', isMaster: true, hash: main.hash, salt: main.salt },
   ];
 };
