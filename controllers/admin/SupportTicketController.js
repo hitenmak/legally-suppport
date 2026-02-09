@@ -77,7 +77,7 @@ exports.list = async (req, res) => {
                 let user = row.userId || {};
                 // dd(user);
                 row.userReference = {
-                    redirectUrl: getFullUrlAction('user/details/' + user._id),
+                    redirectUrl: getFullUrlAction('support-ticket/details/' + row._id),
                     label: user.name || '',
                 };
                 row.username = user.username || '';
