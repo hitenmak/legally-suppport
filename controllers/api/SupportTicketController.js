@@ -85,20 +85,37 @@ exports.createticket = async (req, res) => {
         const ret = res.ret;
         const reqData = req.body;
         // Check validation
+       
+        let category;
+        let subCategory;
 
-        let subCatCount;
-        if (reqData?.categoryId) {
-            const isCategoryExist = await Category.findOne({ _id: reqData?.categoryId }).exec()
-            if (!isCategoryExist) return ret.sendFail('Category does not exist');
+        if (!reqData?.categoryId) {
+            return ret.sendFail('Category is required');
+        }
 
-            subCatCount = await SubCategory.countDocuments({ categoryId: reqData?.categoryId }).exec();
-            if (subCatCount) {
-                if (reqData?.subCategoryId) {
-                    const isSubCategoryExist = await SubCategory.findOne({ _id: reqData?.subCategoryId }).exec()
-                    if (!isSubCategoryExist) return ret.sendFail('SubCategory does not exist');
-                } else {
-                    return ret.sendFail('SubCategory is required');
-                }
+        // Validate category
+        category = await Category.findOne({ _id: reqData?.categoryId }).exec();
+        if (!category) {
+            return ret.sendFail('Category does not exist');
+        }
+
+        // Check if category has subcategories
+        const subCatCount = await SubCategory.countDocuments({
+            categoryId: reqData?.categoryId
+        }).exec();
+
+        if (subCatCount > 0) {
+            if (!reqData?.subCategoryId) {
+                return ret.sendFail('SubCategory is required');
+            }
+
+            subCategory = await SubCategory.findOne({
+                _id: reqData?.subCategoryId,
+                categoryId: reqData?.categoryId
+            }).exec();
+
+            if (!subCategory) {
+                return ret.sendFail('SubCategory does not exist');
             }
         }
 
@@ -169,6 +186,8 @@ exports.createticket = async (req, res) => {
         record.save().then(async updatedRecord => {
             if (empty(updatedRecord)) return ret.sendFail();
             updatedRecord.userId = record.userId;
+            updatedRecord.categoryId = category ? category : updatedRecord.categoryId;
+            updatedRecord.subCategoryId = subCategory ? subCategory : updatedRecord.subCategoryId;
             let resData = MakeData.supportTicketDetails(updatedRecord);
 
             const userReplies = (record?.reply || []).filter(r => r.adminId === null);
@@ -205,7 +224,7 @@ exports.createticket = async (req, res) => {
                 }
             }
 
-            const supportTicket = await SupportTicket.findOne({ _id: record?._id }).populate('userId categoryId subCategoryId').exec();
+            const supportTicket = await SupportTicket.findOne({ _id: record?._id }).populate('userId categoryId subCategoryId acceptedBy').exec();
             const admins = await Admin.find({ $or: [{ isMaster: true }, { isAgent: true }] });
             Promise.all(admins.map((admin) => {
                 Notification.create({
@@ -286,7 +305,7 @@ exports.history = async (req, res) => {
             }
         }
         // Make Query {
-        const newQuery = () => { return SupportTicket.find(filters).populate('userId').populate('reply.adminId'); };
+        const newQuery = () => { return SupportTicket.find(filters).populate('userId categoryId subCategoryId acceptedBy').populate('reply.adminId'); };
         // } Make Query
 
         // Total Count {
@@ -402,13 +421,13 @@ exports.getSupportTicket = async (req, res) => {
                 id: 'required | objectId',
             });
             if (isInvalid) return ret.sendFail(isInvalid);
-            record = await SupportTicket.findById(id).populate('userId categoryId subCategoryId').populate('reply.adminId').exec();
+            record = await SupportTicket.findById(id).populate('userId categoryId subCategoryId acceptedBy').populate('reply.adminId').exec();
         } else {
             isInvalid = checkValidation({ ticketId }, {
                 ticketId: 'required | string',
             });
             if (isInvalid) return ret.sendFail(isInvalid);
-            record = await SupportTicket.findOne({ ticketId }).populate('userId categoryId subCategoryId').populate('reply.adminId').exec();
+            record = await SupportTicket.findOne({ ticketId }).populate('userId categoryId subCategoryId acceptedBy').populate('reply.adminId').exec();
         }
         if (!record) return ret.sendFail(Msg.supportTicket.notFound);
         const result = MakeData.supportTicketDetails(record);

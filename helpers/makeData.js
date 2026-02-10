@@ -73,25 +73,33 @@ exports.supportReplyDetails = reply;
 
 exports.supportTicketDetails = (row) => {
     return {
-        _id: row?._id,
+        _id: row?._id ?? '',
         ticketId: getStr(row?.ticketId),
         isOpen: row?.isOpen,
         // requestType: Constant.ticketRequestType[row.requestType],
         reply: (row.reply.length ? row.reply.map(r => {
             return reply(r, row?.userId);
         }) : []),
-        categoryId: {
-            _id: row?.categoryId?._id,
+        category: {
+            id: row?.categoryId?._id ?? '',
             name: getStr(row?.categoryId?.name),
             label: getStr(row?.categoryId?.label),
         },
-        subCategoryId: {
-            _id: row?.subCategoryId?._id,
+        subCategory: {
+            id: row?.subCategoryId?._id ?? '',
             name: getStr(row?.subCategoryId?.name),
             label: getStr(row?.subCategoryId?.label),
         },
-        acceptedBy: row?.acceptedBy,
-        acceptedAt: row?.acceptedAt,
+        acceptedBy: {
+            id: row?.acceptedBy?._id ?? '',
+            name: getStr(row?.acceptedBy?.name),
+            email: getStr(row?.acceptedBy?.email),
+            isActive: getBool(row?.acceptedBy?.isActive),
+            isMaster: getBool(row?.acceptedBy?.isMaster),
+            isAgent: getBool(row?.acceptedBy?.isAgent),
+
+        },
+        acceptedAt: getDateFormat(row?.acceptedAt, 'D MMM YY, h:mm:ss A'),
         createdAt: getDateFormat(row.createdAt, 'D MMM YY, h:mm:ss A'),
     };
 };
