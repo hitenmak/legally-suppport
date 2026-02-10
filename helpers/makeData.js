@@ -58,12 +58,12 @@ exports.userProfileShort = userProfileShort;
 // Support ticket { ---------------------------------
 // Support ticket
 const reply = (row, user) => {
-    const attachments = row.attachments || [];
+    const attachments = row?.attachments || [];
     const replyBy = empty(row?.adminId) ? getStr(user?.name) : 'Legally Team';
     return {
         _id: row._id,
         replyBy,
-        message: getStr(row.message),
+        message: getStr(row?.message),
         attachments: objMaker(attachments || [], { '_id:_id': '', 'srcUrl:src': Media.getSupportAttachment }),
         replyAt: getDateFormat(row.createdAt, 'D MMM YY, h:mm:ss A'),
     };

@@ -16,6 +16,7 @@ const Admin = require('../../models/Admin');
 const Notification = require('../../models/Notification');
 const Category = require('../../models/Category');
 const SubCategory = require('../../models/SubCategory');
+const { getFullUrlAction } = require('../../helpers/ejsHelpers');
 
 
 //---------------------------------------------------------------------------------------------
@@ -198,7 +199,7 @@ exports.createticket = async (req, res) => {
                 for (const attachment of latestReply.attachments) {
                     attachments.push({
                         filename: attachment?.src || '',
-                        path: attachment.src ? path.join(outputDir, 'support-attachment', attachment.src) : '',
+                        path: attachment?.src ? path.join(outputDir, 'support-attachment', attachment?.src) : '',
                         contentType: 'application/pdf',
                     });
                 }
@@ -217,8 +218,10 @@ exports.createticket = async (req, res) => {
                     "message": "Support Ticket Created",
                 })
             }))
+
+            const detailsUrl = getFullUrlAction(`support-ticket/details/${record?._id}`);
             const adminMails = admins.map(a => a?.email);
-            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, userName: reqData?.email, email: reqData?.email, message: latestReply?.message, category: supportTicket?.categoryId?.label ?? 'N/A', subCategory: supportTicket?.subCategoryId?.label ?? 'N/A' }).catch(e => console.log(e));
+            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, userName: reqData?.email, email: reqData?.email, message: latestReply?.message, category: supportTicket?.categoryId?.label ?? 'N/A', subCategory: supportTicket?.subCategoryId?.label ?? 'N/A', detailsUrl }).catch(e => console.log(e));
             ret.sendSuccess(resData, Msg.supportTicket.create);
         }).catch(e => ret.err500(e));
     });
