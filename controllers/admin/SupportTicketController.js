@@ -380,8 +380,8 @@ exports.accept = async (req, res) => {
         if (isInvalid) return ret.goBackError(isInvalid);
         const isExist = await SupportTicket.findById(id).exec();
         if (!isExist) return ret.goBackError(Msg.supportTicket.notFound);
-        else if (isExist?.acceptedBy && (getStr(isExist?.acceptedBy) === getStr(req?.user?._id))) return ret.sendFail(Msg.supportTicket.accept.alreadyAccepted);
-        else if (isExist?.acceptedBy && (getStr(isExist?.acceptedBy) != getStr(req?.user?._id))) return ret.sendFail(Msg.supportTicket.accept.alreadyAcceptedByOther);
+        else if (isExist?.acceptedBy && (getStr(isExist?.acceptedBy) === getStr(req?.user?._id))) return ret.goBackError(Msg.supportTicket.accept.alreadyAccepted);
+        else if (isExist?.acceptedBy && (getStr(isExist?.acceptedBy) != getStr(req?.user?._id))) return ret.goBackError(Msg.supportTicket.accept.alreadyAcceptedByOther);
         const result = await SupportTicket.findByIdAndUpdate({ _id: id }, { $set: { acceptedBy: req?.user?._id, acceptedAt: Date.now() } }).exec();
         if (!result) return ret.goBackError(Msg.supportTicket.accept.fail);
         // ret.sendSuccess({}, Msg.supportTicket.accept.success);
