@@ -95,6 +95,8 @@ exports.createticket = async (req, res) => {
                 if (reqData?.subCategoryId) {
                     const isSubCategoryExist = await SubCategory.findOne({ _id: reqData?.subCategoryId }).exec()
                     if (!isSubCategoryExist) return ret.sendFail('SubCategory does not exist');
+                } else {
+                    return ret.sendFail('SubCategory is required');
                 }
             }
         }
@@ -144,12 +146,12 @@ exports.createticket = async (req, res) => {
 
             updatedRecord.save();
             updatedRecord = updatedRecord?.toObject();
-            record.userId = updatedRecord._id;
+            record.userId = updatedRecord;
         } else {
             // record.categoryId = getStr(reqData?.categoryId),
             // record.subCategoryId = getStr(reqData?.subCategoryId),
             // record.questions = (reqData?.questions),
-            record.userId = isExistEmail?._id;
+            record.userId = isExistEmail;
         }
 
         // record.requestType = getStr(reqData.requestType);
@@ -157,7 +159,7 @@ exports.createticket = async (req, res) => {
         record.categoryId = getStr(reqData?.categoryId);
         if (reqData?.subCategoryId) record.subCategoryId = getStr(reqData?.subCategoryId);
         // record.questions = (reqData?.questions),
-        record.userId = isExistEmail?._id;
+        // record.userId = isExistEmail?._id;
         record.ticketId = result ? (parseInt(result.ticketId) + 1).toString().padStart(8, '0') : (1).toString().padStart(8, '0');
         record.reply.push({
             message: getStr(reqData.message),
@@ -204,7 +206,7 @@ exports.createticket = async (req, res) => {
 
             const supportTicket = await SupportTicket.findOne({ _id: record?._id }).populate('userId categoryId subCategoryId').exec();
             const admins = await Admin.find({ $or: [{ isMaster: true }, { isAgent: true }] });
-            admins.forEach((admin) => {
+            Promise.all(admins.map((admin) => {
                 Notification.create({
                     "receiverId": admin?._id,
                     "receiverType": "Admin",
@@ -214,9 +216,9 @@ exports.createticket = async (req, res) => {
                     "moduleType": "SupportTicket",
                     "message": "Support Ticket Created",
                 })
-            })
+            }))
             const adminMails = admins.map(a => a?.email);
-            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, userName: reqData.email, email: reqData.email, message: latestReply?.message, category: supportTicket?.categoryId?.label, subCategory: supportTicket?.subCategoryId?.label }).catch(e => console.log(e));
+            await supportTicketCreate({ toEmail: adminMails, attachments, ticketId: record?.ticketId, userName: reqData?.email, email: reqData?.email, message: latestReply?.message, category: supportTicket?.categoryId?.label ?? 'N/A', subCategory: supportTicket?.subCategoryId?.label ?? 'N/A' }).catch(e => console.log(e));
             ret.sendSuccess(resData, Msg.supportTicket.create);
         }).catch(e => ret.err500(e));
     });

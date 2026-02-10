@@ -59,7 +59,7 @@ exports.userProfileShort = userProfileShort;
 // Support ticket
 const reply = (row, user) => {
     const attachments = row.attachments || [];
-    const replyBy = empty(row.adminId) ? getStr(user.name) : 'Legally Team';
+    const replyBy = empty(row?.adminId) ? getStr(user?.name) : 'Legally Team';
     return {
         _id: row._id,
         replyBy,
@@ -73,12 +73,12 @@ exports.supportReplyDetails = reply;
 
 exports.supportTicketDetails = (row) => {
     return {
-        _id: row._id,
-        ticketId: getStr(row.ticketId),
-        isOpen: row.isOpen,
+        _id: row?._id,
+        ticketId: getStr(row?.ticketId),
+        isOpen: row?.isOpen,
         // requestType: Constant.ticketRequestType[row.requestType],
         reply: (row.reply.length ? row.reply.map(r => {
-            return reply(r, row.userId);
+            return reply(r, row?.userId);
         }) : []),
         categoryId: {
             _id: row?.categoryId?._id,
