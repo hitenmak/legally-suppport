@@ -40,15 +40,16 @@
         </tr>
         <tr>
             <td style="font-family:Arial,Helvetica,sans-serif;padding:1px;border-bottom:1px solid #ccc;width:66%">
-                <a href="<%= detailsUrl%>" style="text-decoration: none">
-                    <p class="cardOtp"
-                        style="display: block; color:#000000;font-family: 'Inter', sans-serif;font-weight: 600;font-size: 14px;line-height: 1.2;padding: 10px;background: linear-gradient(267.06deg, #B68C03 3.32%, #FDEC70 95.76%);border-radius: 12px;margin: 0;text-align: center;">
-                        Accept and Resolve
-                    </p>
-                </a>
+                <% if (detailsUrl) { %>
+                    <a href="<%= detailsUrl%>" style="text-decoration: none">
+                        <p class="cardOtp"
+                            style="display: block; color:#000000;font-family: 'Inter', sans-serif;font-weight: 600;font-size: 14px;line-height: 1.2;padding: 10px;background: linear-gradient(267.06deg, #B68C03 3.32%, #FDEC70 95.76%);border-radius: 12px;margin: 0;text-align: center;">
+                            Accept and Resolve
+                        </p>
+                    </a>
+                    <% } %>
             </td>
         </tr>
-
     </tbody>
 </table>
 <!-- Body -->

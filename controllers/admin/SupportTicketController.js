@@ -235,7 +235,7 @@ exports.replayStore = async (req, res) => {
                 }
             }
 
-            await supportTicketReply({ toEmail: user.email, attachments, ticketId: record?.ticketId, userName: req.user.name, email: req.user.email, message: latestReply?.message, category: record?.categoryId?.label, subCategory: record?.subCategoryId?.label })
+            await supportTicketReply({ toEmail: user.email, attachments, ticketId: record?.ticketId, userName: req.user.name, email: req.user.email, message: latestReply?.message, category: record?.categoryId?.label, subCategory: record?.subCategoryId?.label, detailsUrl: false })
 
             ret.redirect(`support-ticket/details/${updatedRecord._id}`, 'Saved');
 

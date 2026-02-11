@@ -63,7 +63,7 @@ const cellViewType = (data = '', configRow, search) => {
         emptyToNA: `<span>${data?.length ? data : 'N/A'}</span>`,
         attachment: `<div class="image-rectangle"><img src="${data}" class="imagePreviewModel" alt="User Attachment"></div>`,
         actionCheckbox: `<input type="checkbox" data-id="${data}" class="_deleteSelected" value="${data}">`,
-        actionIsDeletedDisableCheckbox: data?.isDeleted ? `<span></span>` :`<input type="checkbox" data-id="${data?._id}" class="_deleteSelected" value="${data?.isDeleted}">`,
+        actionIsDeletedDisableCheckbox: data?.isDeleted ? `<span></span>` :`<input type="checkbox" data-id="${data?._id}" class="_deleteSelected" value="${data?._id}">`,
         negativeValueToZeroWithBadge: `<span class="badge ${configRow?.classes || 'badge-secondary'}">${data < 0 ? 0: data}</span>`,
 
     }[configRow.displayType] || makeSearchHighlight(data ?? '', search);
