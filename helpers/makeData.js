@@ -77,7 +77,7 @@ exports.supportTicketDetails = (row) => {
         ticketId: getStr(row?.ticketId),
         isOpen: row?.isOpen,
         // requestType: Constant.ticketRequestType[row.requestType],
-        reply: (row.reply.length ? row.reply.map(r => {
+        reply: (row?.reply?.length ? row?.reply?.map(r => {
             return reply(r, row?.userId);
         }) : []),
         category: {
@@ -85,7 +85,7 @@ exports.supportTicketDetails = (row) => {
             name: getStr(row?.categoryId?.name),
             label: getStr(row?.categoryId?.label),
         },
-        subCategory: {
+        subcategory: {
             id: row?.subCategoryId?._id ?? '',
             name: getStr(row?.subCategoryId?.name),
             label: getStr(row?.subCategoryId?.label),
@@ -100,7 +100,7 @@ exports.supportTicketDetails = (row) => {
 
         },
         acceptedAt: getDateFormat(row?.acceptedAt, 'D MMM YY, h:mm:ss A'),
-        createdAt: getDateFormat(row.createdAt, 'D MMM YY, h:mm:ss A'),
+        createdAt: getDateFormat(row?.createdAt, 'D MMM YY, h:mm:ss A'),
     };
 };
 // } Support Ticket ---------------------------------
