@@ -6,6 +6,8 @@ const User = require('../../models/User');
 // Helpers
 const {d, dd, ddm, empty, checkValidation, getBool, getStr, getNum, getVal, formatNumber, flipOnKey, objMaker, toObjectId, arraySum, makeList, getDateFormat, arrayChunk, capitalizeFirstLetter} = require('../../helpers/helpers');
 const Msg = require('../../messages/api');
+const Constant = require('../../config/Constant');
+const Message = require('../../config/Message');
 
 //---------------------------------------------------------------------------------------------
 
@@ -80,7 +82,7 @@ exports.details = async(req, res) => {
 
         // Media Press {
         let mediaPress = mediaPosts['media-press'] || {};
-        if(!empty(mediaPress?.data)) mediaPress = JSON.parse(mediaPress?.data) || {};
+        if (!empty(mediaPress?.data)) mediaPress = JSON.parse(mediaPress?.data) || {};
 
         let mediaPressData = {
             isShow: getBool(mediaPress.isShow),
@@ -89,7 +91,7 @@ exports.details = async(req, res) => {
             fileUrl: Media.getMediaPost(mediaPress.fileUrl),
             fileOriginalName: getStr(mediaPress.fileOriginalName),
             fileType: getStr(mediaPress.fileType),
-            fileFullName: getStr(mediaPress.fileOriginalName)+getStr(mediaPress.fileType),
+            fileFullName: getStr(mediaPress.fileOriginalName) + getStr(mediaPress.fileType),
 
         }
         // } Media Press
@@ -111,18 +113,18 @@ exports.details = async(req, res) => {
         // } Tours
         // } Media Posts
 
-        const startOfDay = moment().set({hour: 0, minute: 0, second: 0, millisecond: 0});
-        const endOfDay = moment().set({hour: 23, minute: 59, second: 59, millisecond: 999});
+        const startOfDay = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+        const endOfDay = moment().set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
         const lastActiveDate = req.user.lastActiveDate;
         const lockWallet = req.user.lockWallet;
-        const totalStakeReturn = await Stake.aggregate([{$match: {userId: toObjectId(req.uid), isStakeComplete: false}}, {$group: {_id: null, total: {$sum: {$divide: [{$multiply: ['$amount', '$rewardPer']}, 100]}}}}]);
+        const totalStakeReturn = await Stake.aggregate([{ $match: { userId: toObjectId(req.uid), isStakeComplete: false } }, { $group: { _id: null, total: { $sum: { $divide: [{ $multiply: ['$amount', '$rewardPer'] }, 100] } } } }]);
         const totalStakeReturnValue = !empty(totalStakeReturn) ? totalStakeReturn[0].total : 0;
         const cappedValue = (await LevelManipulate.cappingCalculate(req.user.lockWallet, totalStakeReturnValue))?.rewardCoin ?? 0;
         const myTeam = await DataManipulate.getMyState(req.user);
         const networkState = await DataManipulate.getNetworkStat();
         const appSettingData = await DataManipulate.getAppConfigData();
 
-        if((process.env.MAINTENANCE_USERNAME.split(',')).includes(_user.username)) {
+        if ((process.env.MAINTENANCE_USERNAME.split(',')).includes(_user.username)) {
             appSettingData.moduleEnabled.transfer = true;
         }
 
@@ -177,22 +179,22 @@ exports.details = async(req, res) => {
 
         ret.sendSuccess(newData, Msg.common.success);
 
-    } catch(e) { ret.err500(e); }
+    } catch (e) { ret.err500(e); }
 };
 
 
 // Details
-exports.teamDetails = async(req, res) => {
+exports.teamDetails = async (req, res) => {
 
     const ret = res.ret;
     const _user = req._user;
 
     try {
-        const startOfDay = moment().set({hour: 0, minute: 0, second: 0, millisecond: 0});
-        const endOfDay = moment().set({hour: 23, minute: 59, second: 59, millisecond: 999});
+        const startOfDay = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+        const endOfDay = moment().set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
         const lastActiveDate = req.user.lastActiveDate;
         const lockWallet = req.user.lockWallet;
-        const totalStakeReturn = await Stake.aggregate([{$match: {userId: toObjectId(req.uid), isStakeComplete: false}}, {$group: {_id: null, total: {$sum: {$divide: [{$multiply: ['$amount', '$rewardPer']}, 100]}}}}]);
+        const totalStakeReturn = await Stake.aggregate([{ $match: { userId: toObjectId(req.uid), isStakeComplete: false } }, { $group: { _id: null, total: { $sum: { $divide: [{ $multiply: ['$amount', '$rewardPer'] }, 100] } } } }]);
         const totalStakeReturnValue = !empty(totalStakeReturn) ? totalStakeReturn[0].total : 0;
         const cappedValue = (await LevelManipulate.cappingCalculate(req.user.lockWallet, totalStakeReturnValue))?.rewardCoin ?? 0;
         const myTeam = await DataManipulate.getMyState(req.user);
@@ -203,16 +205,16 @@ exports.teamDetails = async(req, res) => {
         networkState.totalUsers = networkState.totalUsersBoost;
 
         // Card Details {
-        const cardRequestDetails = await CardRequest.findOne({userId: req.uid}).exec();
-        const activeDirectReferral = await User.countDocuments({sponsorId: _user._id, isActive: true}) || 0;
+        const cardRequestDetails = await CardRequest.findOne({ userId: req.uid }).exec();
+        const activeDirectReferral = await User.countDocuments({ sponsorId: _user._id, isActive: true }) || 0;
         const isValidActiveStake = _user.totalStakingAmount >= Constant.cardConfig.minActiveStakeAmount;
         const isValidDirectReferral = activeDirectReferral >= Constant.cardConfig.minActiveDirectReferral;
         const cardDetails = {
             cardStatus: empty(cardRequestDetails) ? 100 : getNum(cardRequestDetails.cardStatus),
             // isValidForCard: isValidActiveStake && isValidDirectReferral,
             isValidForCard: getBool(_user.isActive), // now all user valid for card (from client requirement)
-            activeStake: {isValid: isValidActiveStake, message: `Stake for 10 or more coins`,},
-            directReferral: {isValid: isValidDirectReferral, message: `Make 10 or more active direct referrals`,},
+            activeStake: { isValid: isValidActiveStake, message: `Stake for 10 or more coins`, },
+            directReferral: { isValid: isValidDirectReferral, message: `Make 10 or more active direct referrals`, },
         };
         // } Card Details
 
@@ -223,7 +225,7 @@ exports.teamDetails = async(req, res) => {
         const withdrawCondition = await WithdrawSettings.findOne().lean().exec();
         let withdrawWarnMsg = '';
         let withdrawWarnCardButton = false;
-        if(withdrawCondition?.isActive) {
+        if (withdrawCondition?.isActive) {
             const current = moment();
             const startOfCurrentMonthDate = current.clone().date(withdrawCondition.startDate).startOf('day');
             const endOfCurrentMonthDate = current.clone().date(withdrawCondition.endDate).endOf('day');
@@ -240,38 +242,38 @@ exports.teamDetails = async(req, res) => {
         }
 
         const commonConfigKey = 'reward-flush';
-        const rewardFlushConfig = (await CommonConfig.findOne({key: commonConfigKey}).exec())?.data;
+        const rewardFlushConfig = (await CommonConfig.findOne({ key: commonConfigKey }).exec())?.data;
         // dd(rewardFlushConfig,'rewardFlushConfig')
         let flushCycleMsg = '', flushCurrentPeriod = '', flushNextPeriod = '';
 
         let flushCycleStartDate = moment(new Date(rewardFlushConfig?.flushCycleDate));
-        if(flushCycleStartDate.isBefore(flushCycleStartDate.clone().startOf('month').add(15, 'days'))) {
+        if (flushCycleStartDate.isBefore(flushCycleStartDate.clone().startOf('month').add(15, 'days'))) {
             flushCycleStartDate = flushCycleStartDate.clone().startOf('month');
-        } else if(flushCycleStartDate.isAfter(flushCycleStartDate.clone().startOf('month').add(15, 'days'))) {
+        } else if (flushCycleStartDate.isAfter(flushCycleStartDate.clone().startOf('month').add(15, 'days'))) {
             flushCycleStartDate = flushCycleStartDate.clone().startOf('month').add(15, 'days');
         }
         // dd(flushCycleStartDate,'flushCycleStartDate')
         let flushCycleEndDate = flushCycleStartDate.clone().add(parseInt(rewardFlushConfig?.flushCycleDays) - 1, 'days').endOf('day');
-        if(!flushCycleStartDate.clone().isSame(flushCycleStartDate.clone().startOf('month').format('YYYY-MM-DD'))) {
+        if (!flushCycleStartDate.clone().isSame(flushCycleStartDate.clone().startOf('month').format('YYYY-MM-DD'))) {
             flushCycleEndDate = flushCycleStartDate.clone().endOf('month');
         }
         // dd(flushCycleEndDate,'flushCycleEndDate');
         const nextFlushCycleStartDate = flushCycleEndDate.clone().add(1, 'days').startOf('day');
         let nextFlushCycleEndDate = nextFlushCycleStartDate.clone().add(parseInt(rewardFlushConfig?.flushCycleDays) - 1, 'days').endOf('day');
-        if(!nextFlushCycleStartDate.clone().isSame(nextFlushCycleStartDate.clone().startOf('month').format('YYYY-MM-DD'))) {
+        if (!nextFlushCycleStartDate.clone().isSame(nextFlushCycleStartDate.clone().startOf('month').format('YYYY-MM-DD'))) {
             nextFlushCycleEndDate = nextFlushCycleStartDate.clone().endOf('month');
         }
-        if(rewardFlushConfig?.flushCycleActive && moment().isAfter(moment(new Date(rewardFlushConfig?.flushCycleDate)))) {
+        if (rewardFlushConfig?.flushCycleActive && moment().isAfter(moment(new Date(rewardFlushConfig?.flushCycleDate)))) {
             flushCurrentPeriod = `Current Period: ${getDateFormat(flushCycleStartDate)} - ${getDateFormat(flushCycleEndDate)}`;
             flushNextPeriod = `Next Period: ${getDateFormat(nextFlushCycleStartDate)} - ${getDateFormat(nextFlushCycleEndDate)}`;
             flushCycleMsg = `Note: Please utilize your wallet balance before current period end`;
         }
 
-        const badgeConfig = await CommonConfig.findOne({key: 'badge-level'}).exec() || {};
+        const badgeConfig = await CommonConfig.findOne({ key: 'badge-level' }).exec() || {};
         // console.log(badgeConfig,'badgeConfig');
         let badgeLevel = badgeConfig?.data?.length ? JSON.parse(badgeConfig?.data) : [];
         // console.log(badgeLevel,'badgeLevel-parse-data');
-        if(empty(badgeLevel)){
+        if (empty(badgeLevel)) {
             throw {
                 isError: true,
                 message: "Badge level config data not found",
@@ -281,7 +283,7 @@ exports.teamDetails = async(req, res) => {
         let badge = getStr(capitalizeFirstLetter(_user?.badge?.name ?? ''));
         let badgeColor = '', badgeImage = '';
         for (const badge of badgeLevel ?? []) {
-            if(_user?.badge?.name == badge.badgeName) {
+            if (_user?.badge?.name == badge.badgeName) {
                 badgeColor = getStr(badge?.hex);
                 badgeImage = getStr(badge?.imageUrl);
                 break;
@@ -296,7 +298,7 @@ exports.teamDetails = async(req, res) => {
         }*/
         let badgeEligbleBox = Message.badgeEligibleBox;
         badge = badge.toLowerCase() == 'normal' ? '' : badge;
-        if(moment().isBefore(moment(Constant.ifcBadgeRestartDate).startOf('day'))){
+        if (moment().isBefore(moment(Constant.ifcBadgeRestartDate).startOf('day'))) {
             badgeEligbleBox.title = '';
             badgeEligbleBox.description = '';
             badgeEligbleBox.buttonText = '';
@@ -350,7 +352,7 @@ exports.teamDetails = async(req, res) => {
                 ...Constant.exchangeOwnership,
             },
             announcement: Constant.announcement, // make sure with app before change
-            ifcPricePrediction: { ...Constant.ifcPricePrediction, description: ifcPricePredictionMsg}, // make sure with app before change
+            ifcPricePrediction: { ...Constant.ifcPricePrediction, description: ifcPricePredictionMsg }, // make sure with app before change
             badge,
             badgeColor,
             badgeUpdateDate: getDateFormat(_user?.badgeUpdateDate),
@@ -364,5 +366,5 @@ exports.teamDetails = async(req, res) => {
 
         ret.sendSuccess(newData, Msg.common.success);
 
-    } catch(e) { ret.err500(e); }
+    } catch (e) { ret.err500(e); }
 };

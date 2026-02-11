@@ -167,7 +167,6 @@
                 method: 'POST',
                 data: { id },
                 success: (res) => {
-                    console.log("Marked as read:", res);
                     window.location.href = getUrl(`/support-ticket/details/${moduleId}`);
                 },
                 error: (err) => {
