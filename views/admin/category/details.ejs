@@ -1,0 +1,133 @@
+<% ConfigLabels={ 'title' : {'s': 'Category' , 'p' : 'Categories' }, 'updateUrl' : _.getFullUrl("category/update")
+    , 'deleteUrl' : _.getFullUrl('category/delete/' +_id) }; %>
+
+    <!-- Style ------------------------------------------------------------>
+    <%- contentFor('style'); %>
+
+        <!-- Content ------------------------------------------------------------>
+        <%- contentFor('content'); %>
+
+            <div class="content-wrapper">
+
+                <!-- Page Header -->
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1>
+                                    <%= ConfigLabels.title.s %>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Main Content -->
+                <section class="content">
+                    <div class="container-fluid">
+
+                        <div class="card">
+                            <div class="card-body">
+
+                                <!-- Category Info -->
+                                <div class="post">
+                                    <div class="user-block">
+                                        <h2 class="username">
+                                            <%= label %>
+                                        </h2>
+                                        <span class="description">
+                                            Created on - <%= createdAt %>
+                                        </span>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Back -->
+                                <button class="btn bg-gradient-secondary mr-2" onclick="history.back()">
+                                    <i class="bi bi-arrow-left-short"></i>
+                                </button>
+                                <!-- Go Back -->
+
+                                <!-- Update Button -->
+                                <button class="btn bg-gradient-warning mr-2" data-toggle="modal"
+                                    data-target="#updateCategoryModal" data-id="<%= _id %>" data-label="<%= label %>">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <!-- Update -->
+
+                                <!-- Delete -->
+                                <a class="btn bg-gradient-danger mr-2" href="<%= ConfigLabels.deleteUrl %>">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <!-- Delete -->
+
+                            </div>
+
+                        </div>
+                    </div>
+
+            </div>
+            </section>
+
+            </div>
+            <!-- ================= MODAL ================= -->
+            <div class="modal fade" id="updateCategoryModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-warning">
+                            <h4 class="modal-title">Update Category</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <form method="POST" action="<%= ConfigLabels.updateUrl %>">
+
+                            <div class="modal-body">
+
+                                <!-- Hidden ID -->
+                                <input type="hidden" name="id" id="categoryId">
+
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" name="label" id="categoryLabel" class="form-control" required>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn bg-gradient-warning">
+                                    Update
+                                </button>
+
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Script ------------------------------------------------------------>
+            <%- contentFor('script') %>
+                <script>
+                    $(document).ready(function () {
+
+                        // Prefill modal data
+                        $('#updateCategoryModal').on('show.bs.modal', function (event) {
+                            const button = $(event.relatedTarget);
+
+                            const id = button.data('id');
+                            const label = button.data('label');
+
+                            $('#categoryId').val(id);
+                            $('#categoryLabel').val(label);
+                        });
+
+                    });
+                </script>

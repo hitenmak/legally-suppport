@@ -105,13 +105,18 @@ router.post('/notifications/markAsRead', authUser, NotificationController.markAs
 router.get('/categories', authUser, notificationMiddleware, CategoryController.index);
 router.post('/category/list', CategoryController.list);
 router.post('/category/create', CategoryController.create);
+router.post('/category/update', CategoryController.update);
+router.get('/category/details/:id', authUser, notificationMiddleware, CategoryController.details);
+router.get('/category/delete/:id', authUser, notificationMiddleware, CategoryController.delete);
 
 //----------------------------------------------
 // SubCategories
 router.get('/subcategories', authUser, notificationMiddleware, SubcategoryController.index);
 router.post('/subcategory/list', SubcategoryController.list);
 router.post('/subcategory/create', SubcategoryController.create);
-
+router.post('/subcategory/update', SubcategoryController.update);
+router.get('/subcategory/details/:id', authUser, notificationMiddleware, SubcategoryController.details);
+router.get('/subcategory/delete/:id', authUser, notificationMiddleware, SubcategoryController.delete);
 //----------------------------------------------
 // Errors
 router.get('/error/:errorCode', ErrorController.index);
