@@ -1,144 +1,143 @@
-<% ConfigLabels={'title': {'cat': 'Category' , 'cats' : 'Categories' },}; %>
-    <% const constant={'FILTER' : 'currentFiltersCategories' }; %>
-        <!-- Style ------------------------------------------------------------>
+<% ConfigLabels={ title: { cat: 'Category' , cats: 'Categories' }, addUrl: _.getFullUrl('category/create') }; %>
+
+    <% const constant={ FILTER: 'currentFiltersCategories' }; %>
+
+        <!-- ================= STYLE ================= -->
         <%- contentFor('style') %>
             <style>
                 h4 {
-                    border: "1px soild red";
-                    margin: 1;
+                    margin: 0;
                 }
             </style>
-            <!-- Content ------------------------------------------------------------>
+
+            <!-- ================= CONTENT ================= -->
             <%- contentFor('content') %>
 
                 <div class="content-wrapper">
 
-                    <!-- Page Header -->
+                    <!-- ================= PAGE HEADER ================= -->
                     <section class="content-header">
                         <div class="container-fluid">
                             <div class="row mb-2">
+
+                                <!-- Left Title -->
                                 <div class="col-sm-4">
                                     <h1>
-                                        <%= ConfigLabels.title.cats; %>
-
-                                            <span class=" badge badge-secondary ml-2 _pagerTotalRecords d-none"></span>
+                                        <%= ConfigLabels.title.cats %>
+                                            <span class="badge badge-secondary ml-2 _pagerTotalRecords d-none"></span>
                                     </h1>
                                 </div>
-                                <div class="col-sm-8">
-                                    <div class="row justify-content-end">
 
-                                        <!-- <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label></label>
-                                            <select class="custom-select form-control-sm" id="requestType"
-                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                                <option value="" selected>- All -</option>
-                                                < % if(requestType) { %>
-                                                    < % for (const key in requestType) { %>
-                                                        <option value="< %=key%>">
-                                                            < %=requestType[key]%>
-                                                        </option>
-                                                        < % } %>
-                                                            < %}%>
-
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Stared</label>
-                                            <select class="custom-select form-control-sm" id="isForDeveloper"
-                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                                <option value="" selected>- All -</option>
-                                                <option value="1">Stared</option>
-                                                <option value="0">Not Stared</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Open</label>
-                                            <select class="custom-select form-control-sm" id="isOpen"
-                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                                <option value="" selected>- All -</option>
-                                                <option value="1">Open</option>
-                                                <option value="0">Closed</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Replied</label>
-                                            <select class="custom-select form-control-sm" id="isRepliedByAdmin"
-                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                                <option value="" selected>- All -</option>
-                                                <option value="1">Replied</option>
-                                                <option value="0">Not Replied</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Read</label>
-                                            <select class="custom-select form-control-sm" id="isRead"
-                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                                <option value="">- All -</option>
-                                                <option value="1">Read</option>
-                                                <option value="0">Unread</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Delete</label>
-                                            <select class="custom-select form-control-sm" id="isDeleted"
-                                                style="height: calc(1.85rem + 2px);line-height: 1em;">
-                                                <option value="">- All -</option>
-                                                <option value="1">Yes</option>
-                                                <option value="0">No</option>
-                                            </select>
-                                        </div>
-                                        <button class="btn btn-sm bg-gradient-danger deleteMultiple float-right">Delete
-                                            Multiple</button>
-                                    </div> -->
-
-                                        <!--<div class="col-sm-2">
-                            <div class="form-group">
-                                <label>From</label>
-                                <input type="date" class="form-control form-control-sm fromDate" id="fromDate">
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label> To</label>
-                                <input type="date" class="form-control form-control-sm toDate" id="toDate">
-                            </div>
-                        </div>-->
-                                    </div>
-
+                                <!-- Right Add Button -->
+                                <div class="col-sm-8 text-right">
+                                    <button class="btn bg-gradient-success btn-sm" data-toggle="modal"
+                                        data-target="#addCategoryModal">
+                                        <i class="bi bi-plus-circle"></i> Add Category
+                                    </button>
                                 </div>
 
                             </div>
                         </div>
                     </section>
-                    <!-- / Page Header -->
 
-                    <!-- Main content -->
-                    <ANY id="tw">
+                    <!-- ================= MAIN CONTENT ================= -->
+                    <section class="content">
+                        <div class="container-fluid">
 
-                    </ANY>
+                            <!-- Table Placeholder -->
+                            <ANY id="tw"></ANY>
 
-                    <!-- /.content -->
+                        </div>
+                    </section>
+
                 </div>
-                <!-- Script ------------------------------------------------------------>
+
+
+                <!-- ================= ADD CATEGORY MODAL ================= -->
+                <div class="modal fade" id="addCategoryModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <div class="modal-header bg-success">
+                                <h4 class="modal-title">Add Category</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <form method="POST" action="<%= ConfigLabels.addUrl %>">
+
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input type="text" name="label" id="category-label" class="form-control"
+                                            required>
+                                        <input type="hidden" name="name" id="category-name" class="form-control"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn bg-gradient-success">
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 
+                <div class="modal fade" id="updateCategoryModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <div class="modal-header bg-warning">
+                                <h4 class="modal-title">Update Category</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <form method="POST" action="<c%= ConfigLabels.updateUrl %>">
+
+                                <div class="modal-body">
+
+                                    < !-- Hidden ID -- >
+                                    <input type="hidden" name="id" id="categoryId">
+
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input type="text" name="label" id="categoryLabel" class="form-control"
+                                            required>
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn bg-gradient-warning">
+                                        Update
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div> -->
+
+
+                <!-- ================= SCRIPT ================= -->
                 <%- contentFor('script') %>
 
                     <script>
+
                         tableLayout = {
-                            label: { label: 'Name', displayType: 'text', isSearchable: 1, isSortable: 1 },
-                            
+                            label: { label: 'Name', displayType: 'text', isSearchable: 1, isSortable: 1 }
                         }
 
                         recordUrls = {
@@ -151,20 +150,34 @@
                             if (currentFilters) currentFilters = JSON.parse(currentFilters) || {};
                             else currentFilters = {};
 
-                            getPage(1)
+                            getPage(1);
                         }
 
                         init(() => {
                             initTable(true, false);
                             updateFilter(true);
-                        })
+                        });
 
                         $(document).on('click', '.goToPage', function () {
-                            let currentFilters = localStorage.getItem('currentFiltersSupportTickets');
+                            let currentFilters = localStorage.getItem('currentFiltersCategories');
                             if (currentFilters) currentFilters = JSON.parse(currentFilters) || {};
 
                             getPage($(this).attr('data-pg-no'));
                         });
 
+                        const labelField = document.getElementById("category-label");
+                        const nameField = document.getElementById("category-name");
 
+                        labelField.addEventListener("input", () => {
+                            let value = labelField.value
+                                .trim()                         // remove starting & ending spaces
+                                .toUpperCase()                  // convert to uppercase
+                                .replace(/&/g, " AND ")         // replace & with AND
+                                .replace(/\//g, " OR ")            // replace / with OR
+                                // .replace(/[(),]/g, " ")         // remove special separators
+                                .replace(/[^A-Z0-9]+/g, "-")    // replace anything non-alphanumeric with -
+                                .replace(/-+/g, "-")            // remove duplicate dashes
+                                .replace(/^-|-$/g, "")         // remove starting/ending dash
+                            nameField.value = value;
+                        });
                     </script>

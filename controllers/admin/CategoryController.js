@@ -66,13 +66,14 @@ exports.create = async (req, res) => {
 			name: 'required|string',
 			label: 'required|string',
 		});
-		if (isInvalid) return ret.sendFail(isInvalid);
+		if (isInvalid) return ret.goBackError(isInvalid);
 		// check validation
 		const isExist = await Category.findOne({ name: reqData?.name }).exec()
-		if (isExist) return ret.sendFail('Category already exist');
+		if (isExist) return ret.goBackError('Category already exist');
 		const category = new Category(reqData);
 		await category.save();
-		ret.sendSuccess(category);
+		// ret.sendSuccess(category);
+		ret.redirectSuccess("categories", "Category created");
 	} catch (error) {
 		ret.goBackError(error);
 	}

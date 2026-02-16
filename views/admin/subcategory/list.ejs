@@ -1,4 +1,5 @@
-<% ConfigLabels={'title': {'subCat': 'Sub Category' , 'subCats' : 'Sub Categories' },}; %>
+<% ConfigLabels={'title': {'subCat': 'Sub Category' , 'subCats' : 'Sub Categories' },addUrl:
+    _.getFullUrl('subcategory/create'),}; %>
 
     <!-- Style ------------------------------------------------------------>
     <%- contentFor('style') %>
@@ -22,6 +23,14 @@
                             </div>
                             <div class="col-sm-8">
                                 <div class="row justify-content-end">
+                                    <!-- Right Add Button -->
+                                    <div class="col-sm-8 text-right">
+                                        <button class="btn bg-gradient-success btn-sm" data-toggle="modal"
+                                            data-target="#addCategoryModal">
+                                            <i class="bi bi-plus-circle"></i> Add Sub-Category
+                                        </button>
+                                    </div>
+
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
@@ -39,7 +48,6 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <!--<div class="col-sm-2">
                             <div class="form-group">
                                 <label>From</label>
@@ -67,6 +75,57 @@
                 </ANY>
 
                 <!-- /.content -->
+            </div>
+
+
+            <!-- ================= ADD CATEGORY MODAL ================= -->
+            <div class="modal fade" id="addCategoryModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-success">
+                            <h4 class="modal-title">Add Sub-Category</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <form method="POST" action="<%= ConfigLabels.addUrl %>">
+
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" name="label" id="category-label" class="form-control" required>
+                                    <input type="hidden" name="name" id="category-name" class="form-control" required>
+                                    <div class="form-group">
+                                        <label>Select Category</label>
+                                        <select name="categoryId" class="form-control" required>
+                                            <option value="">Select Category</option>
+
+                                            <% categories.forEach(function(category) { %>
+                                                <option value="<%= category?._id %>" <% if
+                                                    (category?._id==category?.categoryId) { %> selected <% } %>>
+                                                        <%= category.label %>
+                                                </option>
+                                                <% }); %>
+
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn bg-gradient-success">
+                                    Save
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
             </div>
 
 
@@ -159,4 +218,21 @@
                         // let currentVal = $(this).find(":selected").val();
                         // applyFilters(currentVal, 'requestType');
                     });
+
+                    const labelField = document.getElementById("category-label");
+                    const nameField = document.getElementById("category-name");
+
+                    labelField.addEventListener("input", () => {
+                        let value = labelField.value
+                            .trim()                         // remove starting & ending spaces
+                            .toUpperCase()                  // convert to uppercase
+                            .replace(/&/g, " AND ")         // replace & with AND
+                            .replace(/\//g, " OR ")            // replace / with OR
+                            .replace(/[(),]/g, " ")       // remove special separators
+                            .replace(/[^A-Z0-9]+/g, "-")    // replace anything non-alphanumeric with -
+                            .replace(/-+/g, "-")            // remove duplicate dashes
+                            .replace(/^-|-$/g, "")         // remove starting/ending dash
+                        nameField.value = value;
+                    });
+
                 </script>

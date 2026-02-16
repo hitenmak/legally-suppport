@@ -66,18 +66,18 @@ exports.create = async (req, res) => {
 			label: 'required|string',
 			categoryId: 'required|objectId',
 		});
-		if (isInvalid) return ret.sendFail(isInvalid);
+		if (isInvalid) return ret.goBackError(isInvalid);
 		// check validation
 		const isCategoryExist = await Category.findOne({ _id: reqData?.categoryId }).exec()
-		if (!isCategoryExist) return ret.sendFail('Category does not exist');
+		if (!isCategoryExist) return ret.goBackError('Category does not exist');
 
 		const isExist = await SubCategory.findOne({ name: reqData?.name }).exec()
-		if (isExist) return ret.sendFail('SubCategory already exist');
+		if (isExist) return ret.goBackError('SubCategory already exist');
 		const subCategory = new SubCategory(reqData);
 		await subCategory.save();
-		ret.sendSuccess(subCategory);
+		ret.redirectSuccess("subcategories", "Sub Category created");
 	} catch (error) {
-		ret.err500(error);
+		ret.goBackError(error);
 	}
 }
 
@@ -88,7 +88,7 @@ exports.update = async (req, res) => {
 		// check validation
 		const isInvalid = checkValidation(reqData, {
 			id: 'required|objectId',
-			// name: 'required|string',
+			categoryId: 'required|objectId',
 			label: 'required|string',
 		});
 		if (isInvalid) return ret.sendFail(isInvalid);
@@ -102,7 +102,12 @@ exports.update = async (req, res) => {
 		const isExist = await SubCategory.findOne({ _id: { $ne: reqData?.id }, label: (reqData?.label).trim() }).exec();
 		if (isExist) return ret.goBackError(`SubCategory ${reqData?.label} already exist`);
 
+		// check Category exist
+		const isCategoryExist = await Category.findOne({ _id: reqData?.categoryId }).exec();
+		if (!isCategoryExist) return ret.goBackError('Category does not exist');
+
 		subCategory.label = reqData?.label;
+		subCategory.categoryId = reqData?.categoryId;
 		await subCategory.save();
 		ret.redirectSuccess("subcategories", "Sub Category deleted");
 
@@ -147,7 +152,9 @@ exports.details = async (req, res) => {
 		const subCategory = await SubCategory.findOne({ _id: req?.params?.id }).exec();
 		subCategory.createdAt = getDateFormat(subCategory?.createdAt);
 		if (!subCategory) return ret.goBackError(`SubCategory does not exist`);
-		ret.render(`subcategory/details`, subCategory);
+
+		const categoryList = await Category.find({}).exec();
+		ret.render(`subcategory/details`, { subCategory, categoryList });
 	} catch (error) {
 		ret.goBackError(error);
 	}
