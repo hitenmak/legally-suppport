@@ -21,7 +21,8 @@
             <div class="navbar-search-block">
                 <form class="form-inline">
                     <div class="input-group input-group-sm">
-                        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                        <input class="form-control form-control-navbar" type="search" placeholder="Search"
+                            aria-label="Search">
                         <div class="input-group-append">
                             <button class="btn btn-navbar" type="submit">
                                 <i class="fas fa-search"></i>
@@ -45,7 +46,8 @@
                     <% } %>
             </a>
 
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right bg-dark overflow-scroll">
+            <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-right dropdown-menu-dark overflow-scroll border-bottom">
                 <% if (notifications && notifications.length> 0) { %>
                     <% notifications.forEach(note=> { %>
                         <!-- <a href="support-ticket/details/< %= note?.moduleId %>" class="dropdown-item"> -->
@@ -53,9 +55,6 @@
                             <div class="media notificationItem" data-id="<%= note?._id%>"
                                 data-moduleId="<%= note?.moduleId %>">
                                 <div class="media-body">
-                                    <!-- <p class="dropdown-item-title">
-                                        <%= note?.title %>
-                                    </p> -->
                                     <p class="text-sm dropdown-item-title">
                                         <%= note?.message %>
                                     </p>
@@ -63,17 +62,17 @@
                                             <%= note?.moduleId %>
                                         </p> -->
 
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>
+                                    <p class="text-sm "><i class="far fa-clock mr-1"></i>
                                         <%= new Date(note.createdAt).toLocaleString() %>
                                     </p>
                                 </div>
                             </div>
                         </div>
                         <!-- </a> -->
-                        <!-- <div class="dropdown-divider"></div> -->
+                        <div class="dropdown-divider"></div>
                         <% }) %>
                             <% } else { %>
-                                <span class="dropdown-item text-muted">No notifications</span>
+                                <span class="dropdown-item">No notifications</span>
                                 <% } %>
             </div>
 
