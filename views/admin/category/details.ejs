@@ -26,39 +26,37 @@
 
                         <!-- Category Details -->
                         <div class="card">
-                            <div class="card-body">
+                            <!-- Actions -->
+                            <div class="m-1">
+                                <button class="btn bg-gradient-secondary mr-2" onclick="history.back()">
+                                    <i class="bi bi-arrow-left-short"></i>
+                                </button>
 
-                                <div class="post py-4">
-                                    <div class="user-block">
-                                        <h2 class="username">
+                                <!-- <a class="btn bg-gradient-danger mr-2" href="< %= ConfigLabels.deleteUrl %>">
+                                    <i class="bi bi-trash"></i>
+                                </a> -->
+                            </div>
+                            <div class="card-body py-2">
+                                <div class="row ">
+                                    <!-- Label -->
+                                    <div class="col-md-6 mb-1">
+                                        <label class="small mb-1">
+                                            <!-- Name -->
+                                            Name</label>
+                                        <div class="h5 mb-0">
                                             <%= label %>
-                                        </h2>
-                                        <span class="description">
-                                            Created on - <%= createdAt %>
-                                        </span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <!-- Actions -->
-                                <div class="">
-                                    <button class="btn bg-gradient-secondary mr-2" onclick="history.back()">
-                                        <i class="bi bi-arrow-left-short"></i>
-                                    </button>
-
-                                    <a class="btn bg-gradient-danger mr-2" href="<%= ConfigLabels.deleteUrl %>">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </div>
-
                             </div>
                         </div>
 
                         <!-- ================= UPDATE FORM  ================= -->
 
                         <div class="card mt-3">
-                            <div class="card-header bg-warning">
+                            <!-- <div class="card-header bg-warning">
                                 <h6 class="mb-0">Update Category</h6>
-                            </div>
+                            </div> -->
 
                             <div class="card-body">
                                 <form method="POST" action="<%= ConfigLabels.updateUrl %>">
@@ -79,11 +77,9 @@
                                     <button type="button" class="btn btn-default" onclick="history.back()">
                                         Cancel
                                     </button>
-
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </section>
 

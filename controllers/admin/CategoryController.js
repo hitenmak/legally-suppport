@@ -44,8 +44,8 @@ exports.list = async (req, res) => {
 				r.name = getStr(r?.name);
 				r.label = getStr(r?.label);
 				r.createdAt = (r?.createdAt);
-				r.actionDetails = getFullUrlAction(`category/details/${r?._id}`);
-				r.actionDeleteDirect = getFullUrlAction(`category/delete/${r?._id}`);
+				r.actionEdit = getFullUrlAction(`category/details/${r?._id}`);
+				r.actionDelete = getFullUrlAction(`category/delete/${r?._id}`);
 				list.push(r);
 			})
 		}
@@ -98,8 +98,8 @@ exports.update = async (req, res) => {
 		// category.name = reqData?.name;
 		category.label = reqData?.label;
 		await category.save();
-		// ret.redirect(`category/details/${category?._id}`, "Updated");
-		ret.goBackSuccess("Updated");
+		ret.redirect(`categories`, "Category updated");
+		// ret.goBackSuccess("Updated");
 	} catch (error) {
 		ret.goBackError(error);
 	}

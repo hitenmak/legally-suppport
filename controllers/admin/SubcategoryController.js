@@ -46,8 +46,8 @@ exports.list = async (req, res) => {
 				label: (r?.label),
 				categoryId: (r?.categoryId?._id),
 				categoryName: (r?.categoryId?.label),
-				actionDetails: getFullUrlAction(`subcategory/details/${r?._id}`),
-				actionDeleteDirect: getFullUrlAction(`subcategory/delete/${r?._id}`)
+				actionEdit: getFullUrlAction(`subcategory/details/${r?._id}`),
+				actionDelete: getFullUrlAction(`subcategory/delete/${r?._id}`)
 			};
 		});
 		const resData = { records: records, pageNumber: pager.page, totalPages: pager.totalPages, totalRecords: pager.totalDocs, limit: pager.limit, }
@@ -109,7 +109,7 @@ exports.update = async (req, res) => {
 		subCategory.label = reqData?.label;
 		subCategory.categoryId = reqData?.categoryId;
 		await subCategory.save();
-		ret.redirectSuccess("subcategories", "Sub Category deleted");
+		ret.redirectSuccess("subcategories", "SubCategory updated");
 
 	} catch (error) {
 		ret.err500(error);
@@ -131,7 +131,7 @@ exports.delete = async (req, res) => {
 		// delete subcategory
 		const deletionRes = await SubCategory.findByIdAndDelete(req?.params?.id).exec();
 		if (!deletionRes) return ret.goBackError(`SubCategory not deleted`);
-		ret.redirectSuccess("subcategories", "Sub Category deleted");
+		ret.redirectSuccess("subcategories", "SubCategory deleted");
 	} catch (error) {
 		ret.err500(error);
 	}
