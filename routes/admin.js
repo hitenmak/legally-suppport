@@ -60,6 +60,8 @@ router.get('/login', AuthController.index);
 router.post('/login/check', AuthController.check);
 router.get('/logout', authUser, AuthController.logout);
 router.get('/logout/sleep', AuthController.logoutSleep);
+router.get('/password/forgot', AuthController.forgotPassword);
+router.post('/password/set', AuthController.setPassword);
 
 // Dashboard
 router.get('/dashboard', authUser, notificationMiddleware, DashboardController.index);

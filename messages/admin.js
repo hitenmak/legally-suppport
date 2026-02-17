@@ -33,7 +33,9 @@ module.exports = {
         emailAlreadyExist: 'Email already exist.',
         phoneAlreadyExist: 'Phone already exist.',
         emailValidExist: 'Email is valid.',
-        dependencyIssue: 'Something went wrong'
+        dependencyIssue: 'Something went wrong',
+        passNotMatch: 'Password and confirm password not match',
+        passwordChanged: 'Password changed successfully.',
     },
 
     withdrawal: {

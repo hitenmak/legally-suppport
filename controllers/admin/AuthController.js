@@ -151,7 +151,43 @@ exports.history = async (req, res) => {
     }
 }
 
+exports.forgotPassword = async (req, res) => {
+    const ret = res.ret;
+    try {
+        return ret.render('auth/forgotPassword', {}, null, true);
+    }
+    catch (err) {
+        return ret.goBackError(err);
+    }
+}
 
+
+exports.setPassword = async (req, res) => {
+    const ret = res.ret;
+    const reqData = req.body;
+    try {
+        const isInvalid = checkValidation(reqData, {
+            email: 'required|email',
+            password: 'required|string',
+            confirmPassword: 'required|string',
+        });
+
+        if (isInvalid) return ret.goBackError(isInvalid);
+        if (reqData?.password !== reqData?.confirmPassword) {
+            return ret.goBackError(Msg.auth.passNotMatch);
+        }
+        const admin = await Admin.findOne({ email: reqData?.email });
+        if (empty(admin)) return ret.goBackError(Msg.auth.credentialNotMatch);
+        const { hash, salt } = makeHashPassword(reqData.password);
+        admin.hash = hash;
+        admin.salt = salt;
+        await admin.save();
+        return ret.redirectSuccess("/login", Msg.auth.passwordChanged);
+    }
+    catch (err) {
+        return ret.goBackError(err?.message || err);
+    }
+}
 
 
 
