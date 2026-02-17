@@ -1,11 +1,12 @@
 
 // Models
 const User = require('../../models/User');
+const Admin = require('../../models/Admin');
 const SupportTicket = require('../../models/SupportTicket');
 const SupportTicketQuickReplay = require('../../models/SupportTicketQuickReplay');
 
 // Helpers
-const { d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, getDateFormat, objMaker, getStr, timeSince, formatReqFiles, flipOnKey } = require('../../helpers/helpers');
+const { d, dd, checkValidation, getNum, empty, getFullUrl, getValue, getBool, getDateFormat, objMaker, getStr, timeSince, formatReqFiles, flipOnKey, toObjectId } = require('../../helpers/helpers');
 const { getFullUrlAction } = require('../../helpers/ejsHelpers');
 const Pager = require('../../infrastructure/Pager');
 const Constant = require('../../config/Constant');
@@ -29,10 +30,11 @@ exports.index = async (req, res) => {
     const isAgent = getBool(req?.user?.isAgent);
     const categories = await Category.find({});
     let subCategories = await SubCategory.find({});
-    subCategories = flipOnKey(subCategories, 'categoryId');
+    // subCategories = flipOnKey(subCategories, 'categoryId');
+    const admins = await Admin.find();
     ret.render('support-ticket/list', {
         requestType: Constant.ticketRequestType,
-        categories, subCategories,
+        categories, subCategories, admins,
         viewData: { userId, isMasterAdmin: req?.isMasterAdmin, userPermission: req?.userPermission, isAgent, },
     });
 };
@@ -59,9 +61,11 @@ exports.list = async (req, res) => {
         if (reqData?.filters?.isRead) filters = { ...filters, isRead: reqData.filters.isRead };
         if (reqData?.filters?.isRepliedByAdmin) filters = { ...filters, isRepliedByAdmin: reqData.filters.isRepliedByAdmin };
         if (reqData?.filters?.isForDeveloper) filters = { ...filters, isForDeveloper: reqData.filters.isForDeveloper };
-        if (reqData?.filters?.requestType) filters = { ...filters, requestType: reqData.filters.requestType };
+        // if (reqData?.filters?.requestType) filters = { ...filters, requestType: reqData.filters.requestType };
         if (reqData?.filters?.isDeleted) filters = { ...filters, isDeleted: getBool(reqData.filters.isDeleted) };
-        if (reqData?.filters?.categoryId) filters = { ...filters, categoryId: reqData.filters.categoryId };
+        if (reqData?.filters?.category) filters = { ...filters, "categoryId": toObjectId(reqData.filters.category) };
+        if (reqData?.filters?.subCategory) filters = { ...filters, "subCategoryId": toObjectId(reqData.filters.subCategory) };
+        if (reqData?.filters?.admin) filters = { ...filters, "acceptedBy": toObjectId(reqData.filters.admin) };
         if (getBool(req?.query?.isAgent)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
         // d(filters, 'filters');
         // } Filters
