@@ -66,7 +66,7 @@ exports.list = async (req, res) => {
         if (reqData?.filters?.category) filters = { ...filters, "categoryId": toObjectId(reqData.filters.category) };
         if (reqData?.filters?.subCategory) filters = { ...filters, "subCategoryId": toObjectId(reqData.filters.subCategory) };
         if (reqData?.filters?.admin) filters = { ...filters, "acceptedBy": toObjectId(reqData.filters.admin) };
-        if (getBool(req?.query?.isAgent)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
+        if (getBool(req?.query?.isAgent) || !getBool(req?.query?.isMasterAdmin)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
         // d(filters, 'filters');
         // } Filters
 
