@@ -19,7 +19,7 @@ const questionSchema = new Mongoose.Schema({
 });
 
 const SupportTicketSchema = new Mongoose.Schema({
-    ticketId: { type: String, require: true },
+    ticketId: { type: String, unique: true, require: true },
     userId: { type: objId, ref: 'User', default: null },
     // requestType: { type: String, enum: Constant.ticketRequestTypeKeys, default: 'other' },
     categoryId: { type: objId, ref: 'Category', default: null },

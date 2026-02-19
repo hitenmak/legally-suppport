@@ -162,6 +162,7 @@ exports.createticket = async (req, res) => {
 
             let updatedRecord = await User.create(newRecord);
 
+            if (!updatedRecord?._id) return ret.sendFail("User not created");
             updatedRecord.save();
             updatedRecord = updatedRecord?.toObject();
             record.userId = updatedRecord;
@@ -229,7 +230,7 @@ exports.createticket = async (req, res) => {
 
             const supportTicket = await SupportTicket.findOne({ _id: record?._id }).populate('userId categoryId subCategoryId acceptedBy').exec();
             const admins = await Admin.find({ $or: [{ isMaster: true }, { isAgent: true }] });
-            Promise.all(admins.map((admin) => {
+            await Promise.all(admins.map((admin) => {
                 Notification.create({
                     "receiverId": admin?._id,
                     "receiverType": "Admin",
