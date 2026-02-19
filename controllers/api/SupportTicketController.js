@@ -172,6 +172,9 @@ exports.createticket = async (req, res) => {
             record.userId = isExistEmail;
         }
 
+        if (empty(record?.userId)) {
+            return ret.sendFail("User does not exist");
+        }
         // record.requestType = getStr(reqData.requestType);
         const result = await SupportTicket.findOne({}, {}, { sort: { _id: -1 } }).exec();
         record.categoryId = getStr(reqData?.categoryId);
