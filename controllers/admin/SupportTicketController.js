@@ -14,7 +14,7 @@ const Media = require('../../infrastructure/Media/Media');
 const SubDocument = require('../../infrastructure/SubDocument');
 const Msg = require('../../messages/admin');
 const NotificationSend = require('../../infrastructure/Notification');
-const { supportTicketReply } = require('../../infrastructure/Mail/Mail');
+const {supportTicketReply,notifyClosedTicket} = require('../../infrastructure/Mail/Mail');
 const path = require('path');
 const SubCategory = require('../../models/SubCategory');
 const Category = require('../../models/Category');
@@ -51,33 +51,33 @@ exports.list = async (req, res) => {
         const Pgr = new Pager(reqData);
         if (Pgr.isValidData) return ret.sendFail(Pgr.isValidData);
         let isSortCreatedAt = reqData?.orderBy?.createdAt && (Object.keys(reqData?.orderBy).length == 1) && Object.keys(reqData?.orderBy)[0] == 'createdAt';
-        let options = { page: reqData?.pageNumber || 1, limit: 10, populate: 'userId categoryId subCategoryId acceptedBy reply.adminId', sort: isSortCreatedAt ? { lastRepliedAt: 'desc', ...reqData?.orderBy } : reqData?.orderBy, lean: true, }
+        let options = {page: reqData?.pageNumber || 1,limit: 10,populate: 'userId categoryId subCategoryId acceptedBy reply.adminId',sort: isSortCreatedAt ? {lastRepliedAt: 'desc',...reqData?.orderBy} : reqData?.orderBy,lean: true,}
         // } Page calculation
 
         // Filters {
-        if (!empty(Pgr.commonSearchFilters)) filters = { ...Pgr.commonSearchFilters };
-        if (reqData?.filters?.userId) filters = { ...filters, userId: reqData?.filters?.userId };
-        if (reqData?.filters?.isOpen) filters = { ...filters, isOpen: reqData.filters.isOpen };
-        if (reqData?.filters?.isRead) filters = { ...filters, isRead: reqData.filters.isRead };
-        if (reqData?.filters?.isRepliedByAdmin) filters = { ...filters, isRepliedByAdmin: reqData.filters.isRepliedByAdmin };
-        if (reqData?.filters?.isForDeveloper) filters = { ...filters, isForDeveloper: reqData.filters.isForDeveloper };
+        if (!empty(Pgr.commonSearchFilters)) filters = {...Pgr.commonSearchFilters};
+        if (reqData?.filters?.userId) filters = {...filters,userId: reqData?.filters?.userId};
+        if (reqData?.filters?.isOpen) filters = {...filters,isOpen: reqData.filters.isOpen};
+        if (reqData?.filters?.isRead) filters = {...filters,isRead: reqData.filters.isRead};
+        if (reqData?.filters?.isRepliedByAdmin) filters = {...filters,isRepliedByAdmin: reqData.filters.isRepliedByAdmin};
+        if (reqData?.filters?.isForDeveloper) filters = {...filters,isForDeveloper: reqData.filters.isForDeveloper};
         // if (reqData?.filters?.requestType) filters = { ...filters, requestType: reqData.filters.requestType };
-        if (reqData?.filters?.isDeleted) filters = { ...filters, isDeleted: getBool(reqData.filters.isDeleted) };
-        if (reqData?.filters?.category) filters = { ...filters, "categoryId": toObjectId(reqData.filters.category) };
-        if (reqData?.filters?.subCategory) filters = { ...filters, "subCategoryId": toObjectId(reqData.filters.subCategory) };
-        if (reqData?.filters?.admin) filters = { ...filters, "acceptedBy": toObjectId(reqData.filters.admin) };
-        if (getBool(req?.query?.isAgent) || !getBool(req?.query?.isMasterAdmin)) filters = { ...filters, $or: [{ acceptedBy: req?.query?.userId }, { acceptedBy: null }] };
+        if (reqData?.filters?.isDeleted) filters = {...filters,isDeleted: getBool(reqData.filters.isDeleted)};
+        if (reqData?.filters?.category) filters = {...filters,"categoryId": toObjectId(reqData.filters.category)};
+        if (reqData?.filters?.subCategory) filters = {...filters,"subCategoryId": toObjectId(reqData.filters.subCategory)};
+        if (reqData?.filters?.admin) filters = {...filters,"acceptedBy": toObjectId(reqData.filters.admin)};
+        if (getBool(req?.query?.isAgent) || !getBool(req?.query?.isMasterAdmin)) filters = {...filters,$or: [{acceptedBy: req?.query?.userId},{acceptedBy: null}]};
         // d(filters, 'filters');
         // } Filters
 
         // Make Query {
-        const pager = await SupportTicket.paginate(filters, options);
+        const pager = await SupportTicket.paginate(filters,options);
 
         // } Make Query
 
         let newRecords = [];
         if (!empty(pager.docs)) {
-            (pager.docs || []).forEach((row, i) => {
+            (pager.docs || []).forEach((row,i) => {
                 let user = row.userId || {};
                 // dd(user);
                 row.userReference = {
@@ -93,7 +93,7 @@ exports.list = async (req, res) => {
                 row.profileImage = Media.getAdminUserImage(user.profileImage);
                 row.createdAt = timeSince(row.createdAt);
                 row.isRepliedByAdmin = row.isRepliedByAdmin ? 'Yes' : 'No';
-                row.ticketStatus = { _id: row._id, isDeleted: row?.isDeleted ? true : false };
+                row.ticketStatus = {_id: row._id,isDeleted: row?.isDeleted ? true : false};
                 row.acceptedBy = row?.acceptedBy?.name;
                 row.categoryId = row?.categoryId?.label;
                 row.subCategoryId = row?.subCategoryId?.label;
@@ -103,23 +103,23 @@ exports.list = async (req, res) => {
             });
         }
 
-        const resData = { records: newRecords, pageNumber: pager.page, totalPages: pager.totalPages, totalRecords: pager.totalDocs, limit: pager.limit, }
+        const resData = {records: newRecords,pageNumber: pager.page,totalPages: pager.totalPages,totalRecords: pager.totalDocs,limit: pager.limit,}
 
-        ret.sendSuccess(resData, 'Record found');
-    } catch (e) { console.log(e); ret.err500(e); }
+        ret.sendSuccess(resData,'Record found');
+    } catch (e) {console.log(e); ret.err500(e);}
 };
 
 
 // Create
-exports.create = async (req, res) => {
-    Media.storeSupportAttachment('attachments')(req, res, async (err) => {
+exports.create = async (req,res) => {
+    Media.storeSupportAttachment('attachments')(req,res,async (err) => {
         // dd(req.files);
         req = formatReqFiles(req);
         const ret = res.ret;
         const reqData = req.body;
         const adminId = req.user._id;
         // Check validation
-        const isInvalid = checkValidation(reqData, {
+        const isInvalid = checkValidation(reqData,{
             requestType: `required|in:${Constant.ticketRequestTypeKeys.join(',')}`,
             message: 'required',
             userId: 'required | objectId',
@@ -129,31 +129,31 @@ exports.create = async (req, res) => {
         const record = new SupportTicket;
         record.userId = reqData.userId;
         record.requestType = getStr(reqData.requestType);
-        const result = await SupportTicket.findOne({}, {}, { sort: { _id: -1 } }).exec();
-        record.ticketId = result ? (parseInt(result.ticketId) + 1).toString().padStart(8, '0') : (1).toString().padStart(8, '0');
+        const result = await SupportTicket.findOne({},{},{sort: {_id: -1}}).exec();
+        record.ticketId = result ? (parseInt(result.ticketId) + 1).toString().padStart(8,'0') : (1).toString().padStart(8,'0');
         record.reply.push({
             adminId,
             message: getStr(reqData.message),
-            attachments: objMaker(req.files, { 'src:filename': getStr })
+            attachments: objMaker(req.files,{'src:filename': getStr})
         });
         record.save().then(async updatedRecord => {
             if (empty(updatedRecord)) return ret.sendFail();
             updatedRecord.userId = req._user;
 
-            ret.sendSuccess(getFullUrlAction(`support-ticket/details/${record._id}`), Msg.supportTicket.create);
+            ret.sendSuccess(getFullUrlAction(`support-ticket/details/${record._id}`),Msg.supportTicket.create);
         }).catch(e => ret.err500(e));
     });
 };
 
 
 // Details
-exports.details = async (req, res) => {
+exports.details = async (req,res) => {
     const ret = res.ret;
     try {
         const id = req.params.id;
 
         // Check validation {
-        const isInvalid = checkValidation({ id }, {
+        const isInvalid = checkValidation({id},{
             id: 'required | objectId',
         });
         if (isInvalid) return ret.goBackError(isInvalid);
@@ -161,43 +161,43 @@ exports.details = async (req, res) => {
         // SupportTicketQuickReplay.insertMany([
         //     {title: 'test', description: 'test'}
         // ]);
-        const quickReplies = await SupportTicketQuickReplay.find({}).sort({ title: 1 }).exec() || [];
+        const quickReplies = await SupportTicketQuickReplay.find({}).sort({title: 1}).exec() || [];
         // dd(quickReplies);
         const record = await SupportTicket.findById(id).populate('userId categoryId subCategoryId acceptedBy reply.adminId').exec();
         if (empty(record)) return ret.goBackError();
 
-        const resData = { ...record._doc, quickReplies };
+        const resData = {...record._doc,quickReplies};
         resData.user = resData.userId;
         resData.userId = undefined;
         resData.user.profileImage = Media.getAdminUserImage(resData.user.profileImage);
         resData.createdAt = getDateFormat(resData.createdAt);
         resData.requestType = Constant.ticketRequestType[resData.requestType];
-        resData.attachments = objMaker(resData.attachments, { 'src:src': Media.getSupportAttachment });
+        resData.attachments = objMaker(resData.attachments,{'src:src': Media.getSupportAttachment});
         const reply = resData.reply || [];
-        reply.forEach((r, i) => {
+        reply.forEach((r,i) => {
             reply[i].replyAt = timeSince(r.createdAt);
-            reply[i].dayAt = getDateFormat(r.createdAt, 'D MMM YY, h:mm:ss A');
+            reply[i].dayAt = getDateFormat(r.createdAt,'D MMM YY, h:mm:ss A');
             reply[i].userName = r.adminId?.name || resData.user?.name;
-            reply[i].attachments = objMaker(r.attachments, { 'src:src': Media.getSupportAttachment });
+            reply[i].attachments = objMaker(r.attachments,{'src:src': Media.getSupportAttachment});
         });
         resData.reply = reply;
 
         resData.userProfileDetails = getFullUrlAction('user/details/' + record.userId?._id);
-        ret.render('support-ticket/details', resData);
-    } catch (e) { console.log(e); ret.goBackError(e); }
+        ret.render('support-ticket/details',resData);
+    } catch (e) {console.log(e); ret.goBackError(e);}
 };
 
 
 // Replay Store
-exports.replayStore = async (req, res) => {
+exports.replayStore = async (req,res) => {
 
-    Media.storeSupportAttachment('attachments')(req, res, async (err) => {
+    Media.storeSupportAttachment('attachments')(req,res,async (err) => {
         req = formatReqFiles(req);
         const ret = res.ret;
         let reqData = req.body;
 
         // Check validation {
-        const isInvalid = checkValidation(reqData, {
+        const isInvalid = checkValidation(reqData,{
             ticketId: 'required|objectId',
             message: 'required',
         });
@@ -239,9 +239,9 @@ exports.replayStore = async (req, res) => {
                 }
             }
 
-            await supportTicketReply({ toEmail: user.email, attachments, ticketId: record?.ticketId, userName: req.user.name, email: req.user.email, message: latestReply?.message, category: record?.categoryId?.label, subCategory: record?.subCategoryId?.label, detailsUrl: false })
+            await supportTicketReply({toEmail: user.email,attachments,ticketId: record?.ticketId,userName: req.user.name,email: req.user.email,message: latestReply?.message,category: record?.categoryId?.label,subCategory: record?.subCategoryId?.label,detailsUrl: false})
 
-            ret.redirect(`support-ticket/details/${updatedRecord._id}`, 'Saved');
+            ret.redirect(`support-ticket/details/${updatedRecord._id}`,'Saved');
 
         }).catch(e => ret.goBackError());
     });
@@ -268,7 +268,16 @@ exports.updateStatus = async (req, res) => {
         const isOpen = !getBool(reqData.isOpen);
         const result = await SupportTicket.findByIdAndUpdate({ _id: reqData.ticketId }, { $set: { isOpen, isRead: true } }).exec();
         if (empty(result)) return ret.goBackError();
-        ret.redirect(`support-ticket/details/${result._id}`, 'Saved');
+
+        const ticket = await SupportTicket.findById(reqData?.ticketId).populate('userId');
+        if (!ticket) return ret.sendFail(Msg.supportTicket.notFound);
+
+        if (reqData?.isOpen && !ticket?.isCloseEmailSent) {
+            await notifyClosedTicket({ticketId: ticket?.ticketId,toEmail: ticket?.userId?.email,name: ticket?.userId?.name,surveyLink: 'https://forms.cloud.microsoft/e/dF6Pwkq8na'})    
+            await SupportTicket.findByIdAndUpdate(ticket?._id,{isCloseEmailSent: true});
+        }
+
+        ret.redirect(`support-ticket/details/${result._id}`,'Saved');
 
     } catch (e) { ret.goBackError(e); }
 

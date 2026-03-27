@@ -20,7 +20,7 @@ exports.supportTicketCreate = async (payload) => {
     return new Promise(async (resolve, reject) => {
         payload.subject = process.env.APP_NAME + ` - New support ticket has been created.`;
         // payload.toEmail = payload?.user?.email;
-        resolve(await sendMailTemplate('support-ticket', payload));
+        resolve(await sendMailTemplate('support-ticket',payload));
     });
 };
 
@@ -29,5 +29,15 @@ exports.supportTicketReply = async (payload) => {
         payload.subject = process.env.APP_NAME + ` - You just got a new reply for support ticket ${payload.ticketId}.`;
         // payload.toEmail = payload?.user?.email;
         resolve(await sendMailTemplate('support-ticket', payload));
+    });
+};
+
+
+exports.notifyClosedTicket = async (payload) => {
+    return new Promise(async (resolve,reject) => {
+        payload.subject = process.env.APP_NAME + ` - Your Support Ticket ${payload.ticketId} Has Been Closed - Share Your Feedback.`;
+        // payload.toEmail = payload?.user?.email;
+        payload.companyName = process.env.APP_NAME;
+        resolve(await sendMailTemplate('closed-ticket',payload));
     });
 };

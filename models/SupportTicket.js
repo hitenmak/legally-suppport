@@ -32,6 +32,7 @@ const SupportTicketSchema = new Mongoose.Schema({
     isDeleted: { type: Boolean, default: false },
     reply: [replySchema],
     lastRepliedAt: { type: Date, default: new Date() },
+    isCloseEmailSent :  { type: Boolean, default: false },
     acceptedBy: { type: objId, ref: 'Admin', default: null },
     acceptedAt: { type: Date, default: null },
 },
